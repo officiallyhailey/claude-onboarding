@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home A · Drift</title>
+<style>
+/* ===========================================================================
+   A · DRIFT
+   The page sits in weather. One field of mist behind everything, type floating
+   on it, and not a single card. The four phases are a row of hairlines.
+
+   SWAPPING IN A REAL IMAGE: set --photo on .sky to url("img/whatever.jpg").
+   The procedural layers below sit under it and keep working as the fallback,
+   so a photo with soft edges will blend rather than replace.
+   =========================================================================== */
+
+/* The real faces, borrowed from the site next door so these read in the type
+   they would actually ship in. Named-only font stacks fall back to Helvetica,
+   and at this size the typeface is most of the design. */
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
+:root {
+    --field: #0a0a0b;
+    --ink: #e9ecee;
+    --sub: #9aa1a6;
+    --lab: #7a8085;
+    --rule: rgba(233, 236, 238, 0.13);
+    --accent: #d97757;
+    --accent-ink: #e8917a;
+
+    --mist-1: rgba(217, 119, 87, 0.46);
+    --mist-2: rgba(150, 175, 200, 0.32);
+    --mist-3: rgba(233, 236, 238, 0.15);
+    --veil: 0.5;
+
+    --sans: "Archivo", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.light {
+    --field: #e6e7e8;
+    --ink: #17191c;
+    --sub: #4c5156;
+    --lab: #5f646a;
+    --rule: rgba(23, 25, 28, 0.14);
+    --accent: #c25f3d;
+    --accent-ink: #a8451f;
+
+    --mist-1: rgba(194, 95, 61, 0.26);
+    --mist-2: rgba(120, 150, 180, 0.20);
+    --mist-3: rgba(255, 255, 255, 0.55);
+    --veil: 0.5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--field);
+    color: var(--sub);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* ---------------- the weather ---------------- */
+
+/* Fixed, so the page scrolls THROUGH the atmosphere rather than dragging it
+   along. That one detail is most of why it reads as depth and not as wallpaper. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    background-image: var(--photo, none);
+    background-size: cover;
+    background-position: center;
+}
+
+/* Three slow blooms of colour. Different sizes, different speeds, all far
+   larger than the viewport, so the eye never finds the edge of one. */
+.sky span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+}
+
+.sky .b1 {
+    width: 78vw; height: 78vw;
+    top: -26vw; left: -14vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-1), transparent 68%);
+    animation: drift1 47s ease-in-out infinite alternate;
+}
+
+.sky .b2 {
+    width: 92vw; height: 92vw;
+    top: -8vw; right: -30vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-2), transparent 66%);
+    animation: drift2 61s ease-in-out infinite alternate;
+}
+
+.sky .b3 {
+    width: 64vw; height: 64vw;
+    bottom: -28vw; left: 24vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-3), transparent 70%);
+    animation: drift3 53s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 { to { transform: translate3d(9vw, 6vh, 0) scale(1.16); } }
+@keyframes drift2 { to { transform: translate3d(-11vw, 9vh, 0) scale(1.1); } }
+@keyframes drift3 { to { transform: translate3d(7vw, -7vh, 0) scale(1.2); } }
+
+/* The grain is what stops the gradients reading as a cheap CSS blur: real fog
+   has structure. feTurbulence supplies it, blurred just enough to be vapour
+   rather than noise. */
+/* The explicit width and height are load-bearing. An <svg> is a replaced
+   element with an intrinsic 300x150 default, so `inset` alone positions it and
+   leaves it 300px wide in the corner rather than stretching it. */
+.grain {
+    position: fixed;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    z-index: -1;
+    opacity: var(--veil);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* A soft vertical wash so type at the top always has something to sit on,
+   whatever the weather underneath is doing. Light at the top on purpose: the
+   first version held 55% of the field colour up there and flattened the whole
+   sky back to plain black before anyone saw it. */
+.settle {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--field) 22%, transparent) 0%,
+        color-mix(in srgb, var(--field) 0%, transparent) 34%,
+        color-mix(in srgb, var(--field) 55%, transparent) 100%);
+}
+
+/* ---------------- shell ---------------- */
+
+/* Every affordance here is a tone change or a reveal, so the keyboard needs
+   something of its own. The browser default is a yellow box that belongs to no
+   palette on the page. */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 34px; }
+
+/* The brand square must not stretch. Without `flex: none` it is a flex item
+   that grows to whatever height the wordmark takes, and on a 375px phone the
+   wordmark wraps to three lines and turns the square into a bar. The wordmark
+   itself steps out below 560px rather than wrapping. */
+.brand { min-width: 0; white-space: nowrap; }
+.brand i { flex: none; }
+@media (max-width: 560px) {
+    .brand .word { display: none; }
+    nav.top { gap: 18px; }
+}
+
+nav.top {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 30px 0 0;
+}
+
+.brand {
+    display: flex; align-items: center; gap: 11px;
+    font-weight: 600; font-size: 14.5px; color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-right: auto;
+}
+
+.brand i {
+    width: 25px; height: 25px; display: block;
+    background: var(--accent);
+    border-radius: 8px;
+    opacity: 0.92;
+}
+
+nav.top a {
+    font-size: 13.5px; color: var(--lab);
+    text-decoration: none;
+    transition: color 0.25s;
+}
+nav.top a:hover { color: var(--ink); }
+
+.toggle {
+    background: none; border: none; cursor: pointer;
+    color: var(--lab); font-family: var(--mono);
+    font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase;
+    padding: 7px 0;
+}
+.toggle:hover { color: var(--accent-ink); }
+
+/* ---------------- hero ---------------- */
+
+header.hero { padding: 17vh 0 13vh; }
+
+.eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 30px;
+}
+
+h1 {
+    margin: 0 0 32px;
+    font-size: clamp(44px, 8.2vw, 104px);
+    line-height: 0.99;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    color: var(--ink);
+    max-width: 15ch;
+}
+
+/* The one line of colour in the whole page. It lands on the word the page is
+   actually about, which is cheaper than a subtitle explaining it. */
+h1 em { font-style: normal; color: var(--accent-ink); }
+
+.lede {
+    max-width: 46ch;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.55;
+    color: var(--sub);
+    margin: 0 0 44px;
+}
+
+.cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
+.go {
+    display: inline-flex; align-items: center; gap: 11px;
+    padding: 15px 30px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px; font-weight: 600;
+    transition: transform 0.3s cubic-bezier(.2,.8,.3,1), box-shadow 0.3s;
+    box-shadow: 0 10px 40px -12px var(--accent);
+}
+.go:hover { transform: translateY(-2px); box-shadow: 0 18px 52px -14px var(--accent); }
+
+.ghost {
+    color: var(--lab); text-decoration: none; font-size: 15px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3px;
+    transition: color 0.25s, border-color 0.25s;
+}
+.ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ---------------- the four phases, as hairlines ---------------- */
+
+section.phases { padding-bottom: 16vh; }
+
+.phase {
+    display: grid;
+    /* The title column is sized so the longest of the four, Implementing Your
+       Systems, still sits on one line. A wrapped title makes its row taller
+       than the other three, and with no boxes the rows have nothing but even
+       rhythm holding them together. */
+    grid-template-columns: 62px minmax(260px, 1.2fr) 1.35fr auto;
+    gap: 26px;
+    align-items: baseline;
+    padding: 30px 0;
+    border-top: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.phase:last-child { border-bottom: 1px solid var(--rule); }
+
+/* The whole affordance: a wash that grows out of the left edge, and the row
+   easing to the right. No box appears, nothing is outlined, and the row still
+   plainly responds to being approached. */
+.phase::before {
+    content: "";
+    position: absolute;
+    inset: 0 -34px;
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--accent) 13%, transparent),
+        transparent 58%);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+.phase:hover::before { opacity: 1; }
+.phase > * { transition: transform 0.45s cubic-bezier(.2,.8,.3,1), color 0.3s; }
+.phase:hover > * { transform: translateX(10px); }
+
+.pn {
+    font-family: var(--mono);
+    font-size: 12px; letter-spacing: 0.05em;
+    color: var(--accent-ink);
+    opacity: 0.75;
+}
+
+.pt {
+    font-size: clamp(19px, 2.4vw, 26px);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    line-height: 1.15;
+}
+
+.pd { font-size: 14.5px; color: var(--lab); line-height: 1.5; }
+
+.pk {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--lab);
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+.phase:hover .pt { color: var(--accent-ink); }
+
+@media (max-width: 860px) {
+    .wrap { padding: 0 22px; }
+    .phase { grid-template-columns: 44px 1fr; gap: 6px 16px; }
+    .pd { grid-column: 2; }
+    .pk { grid-column: 2; }
+    header.hero { padding: 11vh 0 9vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sky span { animation: none; }
+    .phase > *, .go { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true">
+    <span class="b1"></span><span class="b2"></span><span class="b3"></span>
+</div>
+
+<svg class="grain" aria-hidden="true">
+    <filter id="mistA">
+        <feTurbulence type="fractalNoise" baseFrequency="0.0055" numOctaves="5" seed="11" />
+        <feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.52  0 0 0 0 0.5  0 0 0 -1.1 0.92" />
+        <feGaussianBlur stdDeviation="7" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#mistA)" />
+</svg>
+
+<div class="settle" aria-hidden="true"></div>
+
+<div class="wrap">
+    <nav class="top">
+        <span class="brand"><i></i> <span class="word">Claude for Junior Developers</span></span>
+        <a href="#">Setup</a>
+        <a href="#">Appendix</a>
+        <button class="toggle" onclick="document.documentElement.classList.toggle('light')">Light</button>
+    </nav>
+
+    <header class="hero">
+        <div class="eyebrow">A complete onboarding package</div>
+        <h1>Four phases, from writing code to running <em>a system</em>.</h1>
+        <p class="lede">
+            You already know how to build. This is the part nobody teaches: how to
+            work with an agent so it actually knows who you are and how you work.
+        </p>
+        <div class="cta">
+            <a class="go" href="#">Start with Phase 1 &rarr;</a>
+            <a class="ghost" href="#">Or download the kits</a>
+        </div>
+    </header>
+
+    <section class="phases">
+        <a class="phase" href="#">
+            <span class="pn">01</span>
+            <span class="pt">Understanding Claude</span>
+            <span class="pd">What are all the pieces, and when do I use each?</span>
+            <span class="pk">Read only</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">02</span>
+            <span class="pt">Introducing Yourself</span>
+            <span class="pd">How do I tell Claude who I am, so every session knows?</span>
+            <span class="pk">Installs the context kit</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">03</span>
+            <span class="pt">Implementing Your Systems</span>
+            <span class="pd">How do I install the skills, agents, hooks and workflows I work with?</span>
+            <span class="pk">Installs the workflow kit</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">04</span>
+            <span class="pt">Working Together</span>
+            <span class="pd">How do I actually work with Claude well, day to day?</span>
+            <span class="pk">Habits, nothing installs</span>
+        </a>
+    </section>
+</div>
+
+</body>
+</html>

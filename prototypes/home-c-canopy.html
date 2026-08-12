@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home C · Canopy</title>
+<style>
+/* ===========================================================================
+   C · CANOPY
+   The weather is a shape rather than a field: one soft organic mass anchored
+   to the right, with fine filaments running through it. Content sits left, on
+   clean ground. The four phases open on approach instead of showing everything
+   at once, so the page is quiet until you ask it something.
+
+   SWAPPING IN A REAL IMAGE: set --photo on .bloom. It is masked to the same
+   organic shape, so a rectangular photo arrives already soft edged.
+   =========================================================================== */
+
+/* The real faces, borrowed from the site next door so these read in the type
+   they would actually ship in. Named-only font stacks fall back to Helvetica,
+   and at this size the typeface is most of the design. */
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
+:root {
+    --field: #0a0a0b;
+    --ink: #e9ecee;
+    --sub: #9aa1a6;
+    --lab: #7a8085;
+    --rule: rgba(233, 236, 238, 0.11);
+    --accent: #d97757;
+    --accent-ink: #e8917a;
+
+    --c1: rgba(217, 119, 87, 0.42);
+    --c2: rgba(140, 168, 192, 0.30);
+    --c3: rgba(233, 236, 238, 0.10);
+    --thread: rgba(232, 145, 122, 0.55);
+    --veil: 0.44;
+
+    --sans: "Archivo", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.light {
+    --field: #e8e9ea;
+    --ink: #17191c;
+    --sub: #4c5156;
+    --lab: #5f646a;
+    --rule: rgba(23, 25, 28, 0.12);
+    --accent: #c25f3d;
+    --accent-ink: #a8451f;
+
+    --c1: rgba(194, 95, 61, 0.34);
+    --c2: rgba(110, 145, 180, 0.30);
+    --c3: rgba(255, 255, 255, 0.8);
+    --thread: rgba(168, 69, 31, 0.42);
+    --veil: 0.36;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--field);
+    color: var(--sub);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* ---------------- the bloom ---------------- */
+
+.bloom {
+    position: fixed;
+    top: -14vh; right: -16vw;
+    width: 76vw; height: 126vh;
+    z-index: -2;
+    overflow: hidden;
+    background-image: var(--photo, none);
+    background-size: cover;
+    background-position: center;
+    /* An organic silhouette rather than a rectangle, so the atmosphere has a
+       body. Two radial stops overlap into something lung shaped. */
+    -webkit-mask-image:
+        radial-gradient(ellipse 58% 44% at 62% 34%, #000 22%, transparent 74%),
+        radial-gradient(ellipse 48% 40% at 44% 68%, #000 20%, transparent 72%);
+    mask-image:
+        radial-gradient(ellipse 58% 44% at 62% 34%, #000 22%, transparent 74%),
+        radial-gradient(ellipse 48% 40% at 44% 68%, #000 20%, transparent 72%);
+    -webkit-mask-composite: source-over;
+    mask-composite: add;
+}
+
+.bloom span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(76px);
+    will-change: transform;
+}
+
+.bloom .p1 {
+    width: 60vw; height: 60vw; top: -4vh; right: -6vw;
+    background: radial-gradient(circle, var(--c1), transparent 66%);
+    animation: pulse1 38s ease-in-out infinite alternate;
+}
+.bloom .p2 {
+    width: 52vw; height: 52vw; bottom: 2vh; right: 12vw;
+    background: radial-gradient(circle, var(--c2), transparent 68%);
+    animation: pulse2 49s ease-in-out infinite alternate;
+}
+.bloom .p3 {
+    width: 38vw; height: 38vw; top: 32vh; right: 30vw;
+    background: radial-gradient(circle, var(--c3), transparent 70%);
+    animation: pulse3 43s ease-in-out infinite alternate;
+}
+
+@keyframes pulse1 { to { transform: translate3d(-5vw, 7vh, 0) scale(1.14); } }
+@keyframes pulse2 { to { transform: translate3d(6vw, -6vh, 0) scale(1.09); } }
+@keyframes pulse3 { to { transform: translate3d(-7vw, -5vh, 0) scale(1.22); } }
+
+/* The filaments. Hand drawn curves rather than a generated lattice: this is
+   the bit that has to read as growth and not as a circuit board, and the
+   difference is entirely that the lines are uneven and do not meet at nodes. */
+.threads {
+    position: fixed;
+    top: 0; right: 0;
+    width: 74vw; height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.62;
+}
+
+.threads path {
+    fill: none;
+    stroke: var(--thread);
+    stroke-width: 0.9;
+    stroke-linecap: round;
+    stroke-dasharray: 3 340;
+    animation: travel 19s linear infinite;
+}
+.threads path:nth-child(2) { animation-duration: 26s; animation-delay: -6s; }
+.threads path:nth-child(3) { animation-duration: 22s; animation-delay: -13s; }
+.threads path:nth-child(4) { animation-duration: 31s; animation-delay: -3s; }
+.threads path:nth-child(5) { animation-duration: 24s; animation-delay: -17s; }
+
+/* A single travelling glint per strand, which is what suggests something is
+   moving through without ever drawing an arrow or a pulse dot. */
+@keyframes travel { to { stroke-dashoffset: -686; } }
+
+.threads .still {
+    stroke-dasharray: none;
+    animation: none;
+    opacity: 0.2;
+}
+
+/* The explicit width and height are load-bearing. An <svg> is a replaced
+   element with an intrinsic 300x150 default, so `inset` alone positions it and
+   leaves it 300px wide in the corner rather than stretching it. */
+.grain {
+    position: fixed;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    z-index: -1;
+    opacity: var(--veil);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* ---------------- shell ---------------- */
+
+/* Every affordance here is a tone change or a reveal, so the keyboard needs
+   something of its own. The browser default is a yellow box that belongs to no
+   palette on the page. */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+
+/* The brand square must not stretch. Without `flex: none` it is a flex item
+   that grows to whatever height the wordmark takes, and on a 375px phone the
+   wordmark wraps to three lines and turns the square into a bar. The wordmark
+   itself steps out below 560px rather than wrapping. */
+.brand { min-width: 0; white-space: nowrap; }
+.brand i { flex: none; }
+@media (max-width: 560px) {
+    .brand .word { display: none; }
+    nav.top { gap: 18px; }
+}
+
+nav.top { display: flex; align-items: center; gap: 30px; padding: 30px 0 0; }
+
+.brand {
+    display: flex; align-items: center; gap: 11px;
+    font-weight: 600; font-size: 14.5px; color: var(--ink);
+    letter-spacing: -0.01em; margin-right: auto;
+}
+.brand i {
+    width: 25px; height: 25px; display: block;
+    border-radius: 8px; background: var(--accent); opacity: 0.92;
+}
+
+nav.top a { font-size: 13.5px; color: var(--lab); text-decoration: none; transition: color 0.25s; }
+nav.top a:hover { color: var(--ink); }
+
+.toggle {
+    background: none; border: none; cursor: pointer; color: var(--lab);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.09em;
+    text-transform: uppercase; padding: 7px 0;
+}
+.toggle:hover { color: var(--accent-ink); }
+
+/* ---------------- hero, held left ---------------- */
+
+header.hero { max-width: 640px; padding: 16vh 0 11vh; }
+
+.eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-ink); margin-bottom: 28px;
+}
+
+h1 {
+    margin: 0 0 28px;
+    font-size: clamp(40px, 5.6vw, 76px);
+    line-height: 1.01;
+    letter-spacing: -0.043em;
+    font-weight: 700;
+    color: var(--ink);
+}
+h1 em { font-style: normal; color: var(--accent-ink); }
+
+.lede { max-width: 44ch; font-size: clamp(16.5px, 1.8vw, 19px); line-height: 1.58; margin: 0 0 40px; }
+
+.cta { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+
+.go {
+    display: inline-flex; align-items: center; gap: 11px;
+    padding: 15px 30px; border-radius: 999px;
+    background: var(--accent); color: #fff; text-decoration: none;
+    font-size: 15px; font-weight: 600;
+    box-shadow: 0 12px 44px -14px var(--accent);
+    transition: transform 0.3s cubic-bezier(.2,.8,.3,1), box-shadow 0.3s;
+}
+.go:hover { transform: translateY(-2px); box-shadow: 0 20px 58px -16px var(--accent); }
+
+.ghost {
+    color: var(--lab); text-decoration: none; font-size: 15px;
+    border-bottom: 1px solid var(--rule); padding-bottom: 3px;
+    transition: color 0.25s, border-color 0.25s;
+}
+.ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ---------------- the four, opening on approach ---------------- */
+
+section.phases { max-width: 660px; padding-bottom: 16vh; }
+
+.phase {
+    display: block;
+    text-decoration: none; color: inherit;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.phead { display: flex; align-items: baseline; gap: 18px; }
+
+.pn {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em;
+    color: var(--accent-ink); opacity: 0.7;
+    flex: none; width: 26px;
+}
+
+.pt {
+    font-size: clamp(20px, 2.6vw, 27px);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1.15;
+    color: var(--ink);
+    transition: color 0.3s;
+}
+
+.parr {
+    margin-left: auto;
+    color: var(--lab);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.35s, transform 0.35s cubic-bezier(.2,.8,.3,1);
+}
+
+/* Closed by default. grid-template-rows 0fr to 1fr animates a height the
+   content decides, which is the one way to open a block of unknown length
+   without measuring it in script. */
+.pbody {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s cubic-bezier(.2,.8,.3,1);
+}
+/* `overflow: hidden` here is what lets the track collapse at all: a grid item's
+   automatic minimum size is its min-content height unless the item hides its
+   overflow, and without it every body sits open at full height. The selector is
+   `> *` because these are spans, inside an <a>. */
+.pbody > * { overflow: hidden; }
+
+.pd {
+    padding: 12px 0 2px 44px;
+    font-size: 15px; line-height: 1.55; color: var(--lab);
+    max-width: 52ch;
+}
+
+.pk {
+    display: inline-block;
+    margin: 10px 0 0 44px;
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--lab); opacity: 0.62;
+}
+
+.phase:hover .pbody,
+.phase:focus-visible .pbody { grid-template-rows: 1fr; }
+.phase:hover .pt { color: var(--accent-ink); }
+.phase:hover .parr { opacity: 1; transform: translateX(0); }
+
+@media (max-width: 980px) {
+    .bloom { top: auto; bottom: -30vh; right: -34vw; width: 120vw; height: 90vh; opacity: 0.85; }
+    .threads { display: none; }
+    header.hero { padding: 10vh 0 8vh; }
+}
+
+@media (max-width: 860px) {
+    .wrap { padding: 0 22px; }
+    .pd, .pk { padding-left: 0; margin-left: 0; }
+}
+
+/* Touch has no hover, so the bodies simply stay open. */
+@media (hover: none) {
+    .pbody { grid-template-rows: 1fr; }
+    .parr { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bloom span, .threads path { animation: none; }
+    .pbody { transition: none; grid-template-rows: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bloom" aria-hidden="true">
+    <span class="p1"></span><span class="p2"></span><span class="p3"></span>
+</div>
+
+<svg class="threads" viewBox="0 0 800 900" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <path class="still" d="M700 40 C 560 150, 610 300, 470 380 S 300 560, 340 720" />
+    <path class="still" d="M780 200 C 640 260, 600 400, 520 470 S 380 640, 420 860" />
+    <path class="still" d="M620 0 C 540 160, 430 220, 400 360 S 250 500, 210 660" />
+    <path d="M700 40 C 560 150, 610 300, 470 380 S 300 560, 340 720" />
+    <path d="M780 200 C 640 260, 600 400, 520 470 S 380 640, 420 860" />
+    <path d="M620 0 C 540 160, 430 220, 400 360 S 250 500, 210 660" />
+    <path d="M820 420 C 700 470, 640 560, 570 600 S 470 760, 500 900" />
+    <path d="M560 60 C 500 200, 560 320, 480 430 S 420 620, 460 780" />
+</svg>
+
+<svg class="grain" aria-hidden="true">
+    <filter id="mistC">
+        <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="5" seed="41" />
+        <feColorMatrix values="0 0 0 0 0.58  0 0 0 0 0.54  0 0 0 0 0.5  0 0 0 -1.1 0.9" />
+        <feGaussianBlur stdDeviation="8" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#mistC)" />
+</svg>
+
+<div class="wrap">
+    <nav class="top">
+        <span class="brand"><i></i> <span class="word">Claude for Junior Developers</span></span>
+        <a href="#">Setup</a>
+        <a href="#">Appendix</a>
+        <button class="toggle" onclick="document.documentElement.classList.toggle('light')">Light</button>
+    </nav>
+
+    <header class="hero">
+        <div class="eyebrow">A complete onboarding package</div>
+        <h1>Four phases, from writing code to running <em>a system</em>.</h1>
+        <p class="lede">
+            You already know how to build. This is the part nobody teaches: how to
+            work with an agent so it actually knows who you are and how you work.
+        </p>
+        <div class="cta">
+            <a class="go" href="#">Start with Phase 1 &rarr;</a>
+            <a class="ghost" href="#">Or download the kits</a>
+        </div>
+    </header>
+
+    <section class="phases">
+        <a class="phase" href="#">
+            <span class="phead">
+                <span class="pn">01</span>
+                <span class="pt">Understanding Claude</span>
+                <span class="parr">&rarr;</span>
+            </span>
+            <span class="pbody"><span><span class="pd">What are all the pieces, and when do I use each? Agents, subagents, skills, hooks and workflows, and the table that maps a situation to one of them.</span><span class="pk">Read only</span></span></span>
+        </a>
+        <a class="phase" href="#">
+            <span class="phead">
+                <span class="pn">02</span>
+                <span class="pt">Introducing Yourself</span>
+                <span class="parr">&rarr;</span>
+            </span>
+            <span class="pbody"><span><span class="pd">How do I tell Claude who I am, so every session knows? The private context layer, and six prompts that fill it in by interview rather than by blank form.</span><span class="pk">Installs the context kit</span></span></span>
+        </a>
+        <a class="phase" href="#">
+            <span class="phead">
+                <span class="pn">03</span>
+                <span class="pt">Implementing Your Systems</span>
+                <span class="parr">&rarr;</span>
+            </span>
+            <span class="pbody"><span><span class="pd">How do I install the skills, agents, hooks and workflows I work with? Twelve skills mapped onto an actual working day, and which layer each belongs in.</span><span class="pk">Installs the workflow kit</span></span></span>
+        </a>
+        <a class="phase" href="#">
+            <span class="phead">
+                <span class="pn">04</span>
+                <span class="pt">Working Together</span>
+                <span class="parr">&rarr;</span>
+            </span>
+            <span class="pbody"><span><span class="pd">How do I work with Claude well, day to day? The session loop, when to delegate, how to verify, and the seven ways the loop fails at the human.</span><span class="pk">Habits, nothing installs</span></span></span>
+        </a>
+    </section>
+</div>
+
+</body>
+</html>

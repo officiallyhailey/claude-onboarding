@@ -1,142 +1,80 @@
 import { Link } from "react-router-dom";
 import { phases } from "../data/phases";
-import { packageTree } from "../data/trees";
-import FileTree from "../components/FileTree";
-import Blocks from "../components/Blocks";
+
+// The landing page.
+//
+// Deliberately the shortest page on the site. Everything that used to sit under
+// the phase list, how the phases fit together, what is in the box, adopting
+// into an existing setup, is now on /setup, which is where a reader is when any
+// of it matters. A landing page that explains the whole package before you have
+// agreed to read it is a table of contents with a headline on top.
+//
+// The atmosphere is rendered here rather than in App.jsx so it unmounts the
+// moment you open a phase. A reading page wants the plain field; weather behind
+// six thousand words of documentation is just a legibility problem.
 
 function Home() {
     return (
         <>
-            <div className="hero">
-                <div className="kicker">A complete onboarding package</div>
-                <h1>Four phases, from writing code to running a system.</h1>
-                <p>
-                    A path for a developer to go from writing code to running a full agentic system.
-                </p>
+            <div className="sky" aria-hidden="true">
+                <span className="b1" />
+                <span className="b2" />
+                <span className="b3" />
             </div>
 
-            <div className="pick">
-                <h2>The four phases</h2>
-                <div className="cards">
+            <svg className="grain" aria-hidden="true">
+                <filter id="mist">
+                    <feTurbulence
+                        type="fractalNoise"
+                        baseFrequency="0.0055"
+                        numOctaves="5"
+                        seed="11"
+                    />
+                    <feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.52  0 0 0 0 0.5  0 0 0 -1.1 0.92" />
+                    <feGaussianBlur stdDeviation="7" />
+                </filter>
+                <rect width="100%" height="100%" filter="url(#mist)" />
+            </svg>
+
+            <div className="settle" aria-hidden="true" />
+
+            <div className="landing">
+                <div className="lede-block">
+                    <div className="kicker">A complete onboarding package</div>
+                    <h1>
+                        Four phases, from writing code to running <em>a system</em>.
+                    </h1>
+                    <p className="sell">
+                        You already know how to build. This is the part nobody teaches: how to work
+                        with an agent so it actually knows who you are and how you work.
+                    </p>
+                    <div className="cta">
+                        <Link className="go" to="/phase/understanding-claude">
+                            Start with Phase 1
+                            <span aria-hidden="true">&rarr;</span>
+                        </Link>
+                        <Link className="ghost" to="/setup">
+                            Or download the kits
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="rows">
                     {phases.map((p) => (
-                        <Link className="card" to={`/phase/${p.slug}`} key={p.slug}>
-                            {/* A rounded square, not a circle, and mono. A circle
-                                would read as an avatar and sans would make the
-                                number look like a heading. This is the one place
-                                a card is allowed to look mechanical, and with no
-                                accent colour left it is also what tells the four
-                                phases apart at a glance. */}
-                            <span className="n">{`0${p.n}`}</span>
-                            <h3>{p.title}</h3>
-                            <p>{p.blurb}</p>
-                            <div className="tags">
-                                <span className="chip">{p.kind}</span>
-                            </div>
-                            <div className="go">
-                                Read it
-                                <span className="arr" aria-hidden="true">
-                                    &rarr;
-                                </span>
-                            </div>
+                        <Link className="prow" to={`/phase/${p.slug}`} key={p.slug}>
+                            <span className="pn">{`0${p.n}`}</span>
+                            <span className="pt">{p.title}</span>
+                            <span className="pd">{p.blurb}</span>
+                            <span className="pk">{p.kind}</span>
                         </Link>
                     ))}
                 </div>
 
-                <Link className="wide-card" to="/appendix">
-                    <div>
-                        <h3>Appendix</h3>
-                        <p>
-                            Every defined word in one list, every file in one map, and the eleven points
-                            that could not be fully verified against Anthropic's documentation. This is
-                            also where to look something up mid-task without rereading a phase.
-                        </p>
-                    </div>
-                    <span className="arr" aria-hidden="true">
-                        &rarr;
-                    </span>
-                </Link>
-
-                <h2>How the phases fit together</h2>
-                <Blocks
-                    blocks={[
-                        {
-                            t: "p",
-                            x: "Phase 1 is understanding. Phases 2 and 3 are setup, done once. Phase 4 is the daily practice, repeated forever. The order is not a presentation choice: you cannot introduce yourself before you know the pieces, and you cannot implement systems before your machine knows who you are.",
-                        },
-                        {
-                            t: "table",
-                            head: ["Phase", "Answers", "Installs"],
-                            rows: [
-                                [
-                                    "1. Understanding Claude",
-                                    "What are all the pieces, and when do I use each?",
-                                    "Nothing",
-                                ],
-                                [
-                                    "2. Introducing Yourself",
-                                    "How do I tell Claude who I am, so every session knows?",
-                                    "The context kit, at ~/claude-context",
-                                ],
-                                [
-                                    "3. Implementing Your Systems",
-                                    "How do I install the skills, agents, hooks, and workflows I work with?",
-                                    "The workflow kit, into ~/.claude",
-                                ],
-                                [
-                                    "4. Working Together",
-                                    "How do I actually work with Claude well, day to day?",
-                                    "Nothing. Habits",
-                                ],
-                            ],
-                        },
-                        {
-                            t: "note",
-                            kind: "rule",
-                            lab: "The two kits are two different layers",
-                            x: [
-                                "Phase 2 is the [[context layer]]: who you are. Identity, the memory that loads into every session, your roles, your brand. It installs to a private, git-ignored ~/claude-context.",
-                                "Phase 3 is the [[procedures layer]]: how you work. Skills, subagents, hooks, and dynamic workflows, installed into ~/.claude.",
-                                "They interlock. The Phase 3 skills read from the Phase 2 context and write back to it. That is why Phase 2 comes first.",
-                            ],
-                        },
-                    ]}
-                />
-
-                <h2>Download and install</h2>
-                <Blocks
-                    blocks={[
-                        {
-                            t: "p",
-                            x: "Phases 1 and 4 are reading, and this site is all of it. Phases 2 and 3 install. The setup page is the whole of that job in one place: the kits to download, the commands to run, where every file lands, and the two steps left deliberately to you.",
-                        },
-                    ]}
-                />
-
-                <Link className="wide-card" to="/setup">
-                    <div>
-                        <h3>Setup</h3>
-                        <p>
-                            Download the package, run one installer, and check it worked. About two
-                            minutes, and nothing it does is destructive.
-                        </p>
-                    </div>
-                    <span className="arr" aria-hidden="true">
-                        &rarr;
-                    </span>
-                </Link>
-
-                <h2>What is in the box</h2>
-                <FileTree tree={packageTree} />
-
-                <Blocks
-                    blocks={[
-                        { t: "sub", x: "Adopting into an existing setup" },
-                        {
-                            t: "p",
-                            x: "If you already have a ~/.claude with memory and skills, you are not starting over. The installers layer onto what you have, and Phase 2 covers migrating existing memory into the new homes: move, then trim, so nothing loads twice. Your existing skills are not touched; you index them in the router.",
-                        },
-                    ]}
-                />
+                <p className="after">
+                    Looking something up rather than reading it through? The{" "}
+                    <Link to="/appendix">appendix</Link> has every defined word in one list and every
+                    file in one map.
+                </p>
             </div>
         </>
     );

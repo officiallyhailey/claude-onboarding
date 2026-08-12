@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import Blocks from "../components/Blocks";
+import FileTree from "../components/FileTree";
 import Command from "../components/Command";
+import { packageTree } from "../data/trees";
 import { KitCards, kitById, kitSteps, kitCurl } from "../components/Download";
 
 // The install page.
@@ -68,7 +70,58 @@ function Setup() {
             </div>
 
             <div className="setup">
-                <Step n="01" title="Get the files">
+                {/* Moved off the landing page. It is orientation rather than a
+                    step, but it is the orientation a reader needs immediately
+                    before installing anything, and the landing page was asking
+                    for it before anyone had agreed to read the package. */}
+                <Step n="01" title="How the phases fit together">
+                    <Blocks
+                        blocks={[
+                            {
+                                t: "p",
+                                x: "Phase 1 is understanding. Phases 2 and 3 are setup, done once. Phase 4 is the daily practice, repeated forever. The order is not a presentation choice: you cannot introduce yourself before you know the pieces, and you cannot implement systems before your machine knows who you are.",
+                            },
+                            {
+                                t: "table",
+                                head: ["Phase", "Answers", "Installs"],
+                                rows: [
+                                    [
+                                        "1. Understanding Claude",
+                                        "What are all the pieces, and when do I use each?",
+                                        "Nothing",
+                                    ],
+                                    [
+                                        "2. Introducing Yourself",
+                                        "How do I tell Claude who I am, so every session knows?",
+                                        "The context kit, at ~/claude-context",
+                                    ],
+                                    [
+                                        "3. Implementing Your Systems",
+                                        "How do I install the skills, agents, hooks, and workflows I work with?",
+                                        "The workflow kit, into ~/.claude",
+                                    ],
+                                    [
+                                        "4. Working Together",
+                                        "How do I actually work with Claude well, day to day?",
+                                        "Nothing. Habits",
+                                    ],
+                                ],
+                            },
+                            {
+                                t: "note",
+                                kind: "rule",
+                                lab: "The two kits are two different layers",
+                                x: [
+                                    "Phase 2 is the [[context layer]]: who you are. Identity, the memory that loads into every session, your roles, your brand. It installs to a private, git-ignored ~/claude-context.",
+                                    "Phase 3 is the [[procedures layer]]: how you work. Skills, subagents, hooks, and dynamic workflows, installed into ~/.claude.",
+                                    "They interlock. The Phase 3 skills read from the Phase 2 context and write back to it. That is why Phase 2 comes first.",
+                                ],
+                            },
+                        ]}
+                    />
+                </Step>
+
+                <Step n="02" title="Get the files">
                     <Blocks
                         blocks={[
                             {
@@ -78,9 +131,19 @@ function Setup() {
                         ]}
                     />
                     <KitCards />
+                    <Blocks
+                        blocks={[
+                            { t: "sub", x: "What is in the box" },
+                            {
+                                t: "p",
+                                x: "The whole package, unzipped. The site's own source is not in it: the download is packed from the four phases alone, so this tree is the whole file.",
+                            },
+                        ]}
+                    />
+                    <FileTree tree={packageTree} />
                 </Step>
 
-                <Step n="02" title="Run the installer">
+                <Step n="03" title="Run the installer">
                     <Blocks
                         blocks={[
                             {
@@ -99,13 +162,18 @@ function Setup() {
                         blocks={[
                             {
                                 t: "p",
-                                x: "Both installers are additive and [[no-clobber]]. They never overwrite a file you have filled in, they back up CLAUDE.md before appending to it, and they are safe to run as many times as you like. If you already have a ~/.claude with skills and memory in it, nothing you have is touched.",
+                                x: "Both installers are additive and [[no-clobber]]. They never overwrite a file you have filled in, they back up CLAUDE.md before appending to it, and they are safe to run as many times as you like.",
+                            },
+                            { t: "sub", x: "Adopting into an existing setup" },
+                            {
+                                t: "p",
+                                x: "If you already have a ~/.claude with memory and skills, you are not starting over. The installers layer onto what you have, and Phase 2 covers migrating existing memory into the new homes: move, then trim, so nothing loads twice. Your existing skills are not touched; you index them in the router.",
                             },
                         ]}
                     />
                 </Step>
 
-                <Step n="03" title="What each installer places">
+                <Step n="04" title="What each installer places">
                     <Blocks
                         blocks={[
                             {
@@ -166,7 +234,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="04" title="The two steps that stay manual">
+                <Step n="05" title="The two steps that stay manual">
                     <Blocks
                         blocks={[
                             {
@@ -206,7 +274,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="05" title="Check it worked">
+                <Step n="06" title="Check it worked">
                     <Blocks
                         blocks={[
                             {
@@ -226,7 +294,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="06" title="Then what">
+                <Step n="07" title="Then what">
                     <Blocks
                         blocks={[
                             {

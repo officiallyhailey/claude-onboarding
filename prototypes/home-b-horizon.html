@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home B · Horizon</title>
+<style>
+/* ===========================================================================
+   B · HORIZON
+   One band of light low on the screen, like weather seen from above it, and
+   the page rising out of that. The four phases are staggered rather than
+   gridded, so the eye walks them in order instead of comparing them at once.
+
+   SWAPPING IN A REAL IMAGE: set --photo on .horizon. The mask that fades it
+   into the page is already there, so a full-bleed photo will dissolve rather
+   than end on a hard line.
+   =========================================================================== */
+
+/* The real faces, borrowed from the site next door so these read in the type
+   they would actually ship in. Named-only font stacks fall back to Helvetica,
+   and at this size the typeface is most of the design. */
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../public/fonts/Archivo-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("../public/fonts/JetBrainsMono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
+:root {
+    --field: #0a0a0b;
+    --ink: #e9ecee;
+    --sub: #9aa1a6;
+    --lab: #7a8085;
+    --rule: rgba(233, 236, 238, 0.12);
+    --accent: #d97757;
+    --accent-ink: #e8917a;
+
+    --sun: rgba(217, 119, 87, 0.72);
+    --haze: rgba(154, 176, 196, 0.24);
+    --lift: rgba(233, 236, 238, 0.07);
+    --veil: 0.12;
+
+    --sans: "Archivo", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.light {
+    --field: #e9eaeb;
+    --ink: #17191c;
+    --sub: #4c5156;
+    --lab: #5f646a;
+    --rule: rgba(23, 25, 28, 0.13);
+    --accent: #c25f3d;
+    --accent-ink: #a8451f;
+
+    --sun: rgba(194, 95, 61, 0.52);
+    --haze: rgba(120, 152, 184, 0.26);
+    --lift: rgba(255, 255, 255, 0.75);
+    --veil: 0.16;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--field);
+    color: var(--sub);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* ---------------- the horizon ---------------- */
+
+/* Not fixed. This one belongs to the hero and scrolls away with it, which is
+   what makes the rest of the page feel like it has climbed above the weather. */
+.horizon {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 112vh;
+    z-index: -2;
+    overflow: hidden;
+    background-image: var(--photo, none);
+    background-size: cover;
+    background-position: center 60%;
+    /* The dissolve, so nothing ever ends on an edge. It holds until 66% rather
+       than 46%: the first version started fading right where the sun sits and
+       erased the band of light this whole layout is built around. */
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 66%, transparent 99%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 66%, transparent 99%);
+}
+
+/* The light source, sitting just below the fold so only its bloom is visible.
+   A sun you can see is a picture of a sun; a sun you cannot is atmosphere. */
+.horizon .sun {
+    position: absolute;
+    left: 50%; bottom: 30vh;
+    width: 150vw; height: 82vh;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse 50% 50% at 50% 100%, var(--sun), transparent 72%);
+    filter: blur(46px);
+    animation: breathe 24s ease-in-out infinite alternate;
+}
+
+.horizon .layer {
+    position: absolute;
+    left: -20vw; right: -20vw;
+    height: 46vh;
+    filter: blur(58px);
+    will-change: transform;
+}
+
+.horizon .l1 {
+    bottom: 22vh;
+    background: radial-gradient(ellipse 42% 60% at 30% 50%, var(--haze), transparent 70%);
+    animation: roll 68s ease-in-out infinite alternate;
+}
+
+.horizon .l2 {
+    bottom: 34vh;
+    background: radial-gradient(ellipse 38% 55% at 72% 50%, var(--lift), transparent 68%);
+    animation: roll-back 55s ease-in-out infinite alternate;
+}
+
+@keyframes breathe { to { opacity: 0.72; transform: translateX(-50%) scale(1.08); } }
+@keyframes roll { to { transform: translate3d(11vw, -3vh, 0); } }
+@keyframes roll-back { to { transform: translate3d(-13vw, 4vh, 0); } }
+
+/* Inside .horizon, not a sibling of it, for two reasons. The parent already
+   clips and already carries the dissolve, so the grain inherits both for free.
+   And an absolutely positioned overhang out here widened the document past the
+   viewport, which body's overflow-x could not take back: the page gained a
+   horizontal scroll and a black band down the right.
+
+   The explicit width is also load-bearing. An <svg> is a replaced element with
+   an intrinsic 300x150 default, so left/right alone position it and leave it
+   300px wide rather than stretching it across. */
+.horizon .grain {
+    position: absolute;
+    top: -4%; left: -4%;
+    width: 108%;
+    height: 108%;
+    opacity: var(--veil);
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+}
+
+/* ---------------- shell ---------------- */
+
+/* Every affordance here is a tone change or a reveal, so the keyboard needs
+   something of its own. The browser default is a yellow box that belongs to no
+   palette on the page. */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 34px; position: relative; }
+
+/* The brand square must not stretch. Without `flex: none` it is a flex item
+   that grows to whatever height the wordmark takes, and on a 375px phone the
+   wordmark wraps to three lines and turns the square into a bar. The wordmark
+   itself steps out below 560px rather than wrapping. */
+.brand { min-width: 0; white-space: nowrap; }
+.brand i { flex: none; }
+@media (max-width: 560px) {
+    .brand .word { display: none; }
+    nav.top { gap: 18px; }
+}
+
+nav.top {
+    display: flex; align-items: center; gap: 30px;
+    padding: 30px 0 0;
+}
+
+.brand {
+    display: flex; align-items: center; gap: 11px;
+    font-weight: 600; font-size: 14.5px; color: var(--ink);
+    letter-spacing: -0.01em; margin-right: auto;
+}
+.brand i {
+    width: 25px; height: 25px; display: block;
+    border-radius: 8px; background: var(--accent); opacity: 0.92;
+}
+
+nav.top a { font-size: 13.5px; color: var(--lab); text-decoration: none; transition: color 0.25s; }
+nav.top a:hover { color: var(--ink); }
+
+.toggle {
+    background: none; border: none; cursor: pointer; color: var(--lab);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.09em;
+    text-transform: uppercase; padding: 7px 0;
+}
+.toggle:hover { color: var(--accent-ink); }
+
+/* ---------------- hero, centred over the light ---------------- */
+
+header.hero {
+    text-align: center;
+    padding: 15vh 0 20vh;
+}
+
+.eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 28px;
+}
+
+h1 {
+    margin: 0 auto 30px;
+    max-width: 17ch;
+    font-size: clamp(40px, 6.6vw, 82px);
+    line-height: 1.02;
+    letter-spacing: -0.042em;
+    font-weight: 700;
+    color: var(--ink);
+}
+h1 em { font-style: normal; color: var(--accent-ink); }
+
+.lede {
+    max-width: 52ch;
+    margin: 0 auto 40px;
+    font-size: clamp(16.5px, 1.9vw, 19px);
+    line-height: 1.58;
+    color: var(--sub);
+}
+
+.go {
+    display: inline-flex; align-items: center; gap: 11px;
+    padding: 15px 32px; border-radius: 999px;
+    background: var(--accent); color: #fff;
+    text-decoration: none; font-size: 15px; font-weight: 600;
+    box-shadow: 0 12px 44px -14px var(--accent);
+    transition: transform 0.3s cubic-bezier(.2,.8,.3,1), box-shadow 0.3s;
+}
+.go:hover { transform: translateY(-2px); box-shadow: 0 20px 58px -16px var(--accent); }
+
+/* ---------------- the staggered four ---------------- */
+
+section.phases {
+    display: flex;
+    flex-direction: column;
+    gap: 6vh;
+    padding-bottom: 18vh;
+}
+
+/* Each one sits a little further across than the last. A grid asks you to
+   compare four things; a stagger asks you to read them in order, which is what
+   these actually are. */
+.phase {
+    display: block;
+    max-width: 480px;
+    text-decoration: none;
+    color: inherit;
+    padding: 4px 0 4px 26px;
+    border-left: 1px solid var(--rule);
+    transition: border-color 0.4s ease, transform 0.5s cubic-bezier(.2,.8,.3,1);
+}
+.phase:nth-child(1) { margin-left: 0; }
+.phase:nth-child(2) { margin-left: 12%; }
+.phase:nth-child(3) { margin-left: 24%; }
+.phase:nth-child(4) { margin-left: 36%; }
+
+.phase:hover { border-left-color: var(--accent); transform: translateX(7px); }
+
+.pn {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.16em;
+    color: var(--accent-ink);
+    opacity: 0.72;
+    margin-bottom: 11px;
+}
+
+.pt {
+    display: block;
+    font-size: clamp(23px, 3.2vw, 33px);
+    font-weight: 700;
+    letter-spacing: -0.032em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 11px;
+}
+
+.pd { display: block; font-size: 15px; line-height: 1.55; color: var(--lab); }
+
+.pk {
+    display: inline-block;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--lab); opacity: 0.66;
+}
+
+@media (max-width: 860px) {
+    .wrap { padding: 0 22px; }
+    header.hero { padding: 10vh 0 12vh; }
+    section.phases { gap: 4.5vh; }
+    .phase, .phase:nth-child(n) { margin-left: 0; max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .horizon .sun, .horizon .layer { animation: none; }
+    .phase, .go { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="horizon" aria-hidden="true">
+    <div class="layer l1"></div>
+    <div class="layer l2"></div>
+    <div class="sun"></div>
+    <svg class="grain">
+        <filter id="mistB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="5" seed="23" />
+            <feColorMatrix values="0 0 0 0 0.6  0 0 0 0 0.56  0 0 0 0 0.52  0 0 0 -1.05 0.86" />
+            <feGaussianBlur stdDeviation="4" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#mistB)" />
+    </svg>
+</div>
+
+<div class="wrap">
+    <nav class="top">
+        <span class="brand"><i></i> <span class="word">Claude for Junior Developers</span></span>
+        <a href="#">Setup</a>
+        <a href="#">Appendix</a>
+        <button class="toggle" onclick="document.documentElement.classList.toggle('light')">Light</button>
+    </nav>
+
+    <header class="hero">
+        <div class="eyebrow">A complete onboarding package</div>
+        <h1>From writing code to running <em>a system</em>.</h1>
+        <p class="lede">
+            Four phases. Two of them install something, two of them change how you
+            work. By the end you have an agent that knows your stack, your voice
+            and your rules, and you know when to trust it.
+        </p>
+        <a class="go" href="#">Start with Phase 1 &rarr;</a>
+    </header>
+
+    <section class="phases">
+        <a class="phase" href="#">
+            <span class="pn">PHASE 01</span>
+            <span class="pt">Understanding Claude</span>
+            <span class="pd">What are all the pieces, and when do I use each? Agents, subagents, skills, hooks and workflows, and the table that maps a situation to one of them.</span>
+            <span class="pk">Read only</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">PHASE 02</span>
+            <span class="pt">Introducing Yourself</span>
+            <span class="pd">How do I tell Claude who I am, so every session knows? The private context layer, and six prompts that fill it in by interview.</span>
+            <span class="pk">Installs the context kit</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">PHASE 03</span>
+            <span class="pt">Implementing Your Systems</span>
+            <span class="pd">How do I install the skills, agents, hooks and workflows I work with? Twelve skills mapped to an actual working day.</span>
+            <span class="pk">Installs the workflow kit</span>
+        </a>
+        <a class="phase" href="#">
+            <span class="pn">PHASE 04</span>
+            <span class="pt">Working Together</span>
+            <span class="pd">How do I work with Claude well, day to day? The session loop, when to delegate, how to verify, and the seven ways it fails at the human.</span>
+            <span class="pk">Habits, nothing installs</span>
+        </a>
+    </section>
+</div>
+
+</body>
+</html>

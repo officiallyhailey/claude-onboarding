@@ -1,0 +1,337 @@
+/* The landing page.
+ *
+ * The one page on the site that is not a document, so it is the one page
+ * allowed weather. Everything else keeps the achromatic field the theme is
+ * built on; here a slow mist sits behind the type and the four phases are
+ * hairline rows rather than cards.
+ *
+ * The reason it does not fight the theme: the mist is the accent and two greys,
+ * at low opacity, moving slowly enough that nothing about it competes for
+ * attention with a word. Clean App's rule is that hierarchy comes from
+ * brightness and elevation rather than colour, and none of this marks state or
+ * carries meaning. It is a ground, not a signal.
+ */
+
+:root {
+    --mist-1: rgba(217, 119, 87, 0.46);
+    --mist-2: rgba(150, 175, 200, 0.32);
+    --mist-3: rgba(233, 236, 238, 0.15);
+    --veil: 0.5;
+}
+
+:root.light {
+    --mist-1: rgba(194, 95, 61, 0.26);
+    --mist-2: rgba(120, 150, 180, 0.2);
+    --mist-3: rgba(255, 255, 255, 0.55);
+    --veil: 0.5;
+}
+
+/* ---------------- the weather ---------------- */
+
+/* Fixed, so the page scrolls THROUGH the atmosphere rather than dragging it
+   along. That one detail is most of why it reads as depth and not as wallpaper.
+   Rendered only on this route, so it unmounts the moment you open a phase. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Three slow blooms, all far larger than the viewport, so the eye never finds
+   the edge of one. */
+.sky span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+}
+
+.sky .b1 {
+    width: 78vw;
+    height: 78vw;
+    top: -26vw;
+    left: -14vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-1), transparent 68%);
+    animation: drift1 47s ease-in-out infinite alternate;
+}
+
+.sky .b2 {
+    width: 92vw;
+    height: 92vw;
+    top: -8vw;
+    right: -30vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-2), transparent 66%);
+    animation: drift2 61s ease-in-out infinite alternate;
+}
+
+.sky .b3 {
+    width: 64vw;
+    height: 64vw;
+    bottom: -28vw;
+    left: 24vw;
+    background: radial-gradient(circle at 50% 50%, var(--mist-3), transparent 70%);
+    animation: drift3 53s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 {
+    to {
+        transform: translate3d(9vw, 6vh, 0) scale(1.16);
+    }
+}
+@keyframes drift2 {
+    to {
+        transform: translate3d(-11vw, 9vh, 0) scale(1.1);
+    }
+}
+@keyframes drift3 {
+    to {
+        transform: translate3d(7vw, -7vh, 0) scale(1.2);
+    }
+}
+
+/* Structure, which is what separates fog from a blurred gradient. The explicit
+   width and height are load-bearing: an <svg> is a replaced element with an
+   intrinsic 300x150 default, so `inset` alone positions it and leaves it 300px
+   wide in the corner. */
+.grain {
+    position: fixed;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    z-index: -1;
+    opacity: var(--veil);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* A vertical wash so type always has something to sit on. Light at the top on
+   purpose: holding much of the field colour up there flattens the sky back to
+   the plain background before anyone sees it. */
+.settle {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--field) 22%, transparent) 0%,
+        color-mix(in srgb, var(--field) 0%, transparent) 34%,
+        color-mix(in srgb, var(--field) 55%, transparent) 100%
+    );
+}
+
+/* ---------------- the landing shell ---------------- */
+
+.landing {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.landing .lede-block {
+    padding: 13vh 0 11vh;
+}
+
+.landing .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 28px;
+}
+
+.landing h1 {
+    margin: 0 0 30px;
+    font-size: clamp(38px, 7.4vw, 92px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--ink);
+    max-width: 15ch;
+}
+
+/* The one coloured word on the page, on the thing it is actually about. */
+.landing h1 em {
+    font-style: normal;
+    color: var(--accent-ink);
+}
+
+.landing .sell {
+    max-width: 46ch;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.55;
+    color: var(--sub);
+    margin: 0 0 40px;
+}
+
+.cta {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+}
+
+.cta .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    padding: 15px 30px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 10px 40px -12px var(--accent);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.cta .go:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 52px -14px var(--accent);
+}
+
+.cta .ghost {
+    color: var(--lab);
+    font-size: 15px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3px;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.cta .ghost:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+}
+
+/* ---------------- the four phases, as hairlines ---------------- */
+
+.rows {
+    padding-bottom: 6vh;
+}
+
+/* The title column is sized so the longest of the four still sits on one line.
+   A wrapped title makes its row taller than the other three, and with no boxes
+   the rows have nothing but even rhythm holding them together. */
+.prow {
+    position: relative;
+    display: grid;
+    grid-template-columns: 62px minmax(260px, 1.2fr) 1.35fr auto;
+    gap: 26px;
+    align-items: baseline;
+    padding: 30px 0;
+    border-top: 1px solid var(--rule);
+    color: inherit;
+}
+
+.prow:last-of-type {
+    border-bottom: 1px solid var(--rule);
+}
+
+/* The whole affordance: a wash growing out of the left edge, and the row easing
+   right. No box appears and nothing is outlined, yet the row plainly responds
+   to being approached. */
+.prow::before {
+    content: "";
+    position: absolute;
+    inset: 0 -20px;
+    background: linear-gradient(90deg, var(--accent-dim), transparent 58%);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+
+.prow:hover::before {
+    opacity: 1;
+}
+
+.prow > * {
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1), color 0.3s ease;
+}
+
+.prow:hover > * {
+    transform: translateX(10px);
+}
+
+.prow .pn {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--accent-ink);
+    opacity: 0.75;
+}
+
+.prow .pt {
+    font-size: clamp(19px, 2.4vw, 26px);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    line-height: 1.15;
+}
+
+.prow:hover .pt {
+    color: var(--accent-ink);
+}
+
+.prow .pd {
+    font-size: 14.5px;
+    color: var(--lab);
+    line-height: 1.5;
+}
+
+.prow .pk {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--lab);
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+/* The appendix is not a fifth phase, so it does not get a row. One quiet line
+   under the set, and it is in the nav besides. */
+.after {
+    padding: 26px 0 16vh;
+    font-size: 14.5px;
+    color: var(--lab);
+}
+
+.after a {
+    color: var(--accent-ink);
+    border-bottom: 1px solid var(--accent-dim);
+    padding-bottom: 2px;
+    transition: border-color 0.25s ease;
+}
+
+.after a:hover {
+    border-bottom-color: var(--accent-ink);
+}
+
+@media (max-width: 860px) {
+    .prow {
+        grid-template-columns: 44px 1fr;
+        gap: 6px 16px;
+    }
+    .prow .pd,
+    .prow .pk {
+        grid-column: 2;
+    }
+    .landing .lede-block {
+        padding: 8vh 0 7vh;
+    }
+    .after {
+        padding-bottom: 9vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sky span {
+        animation: none;
+    }
+    .prow > *,
+    .cta .go {
+        transition: none;
+    }
+}
