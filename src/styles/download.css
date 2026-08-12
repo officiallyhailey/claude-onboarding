@@ -11,11 +11,25 @@
     margin: 4px 0 8px;
 }
 
+/* Three or one, for the same reason the phase cards are four, two or one: two
+   kits side by side with the third underneath reads as a mistake rather than as
+   a set. The breakpoint is where a track would drop under 255px. */
 .dlcards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 13px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
+}
+
+@media (max-width: 840px) {
+    .dlcards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* A single kit on a phase page has no set to belong to. */
+.dlcards.one {
+    grid-template-columns: 1fr;
 }
 
 .dlcard {
@@ -125,8 +139,9 @@
     margin: 14px 0 0;
 }
 
-/* Inside the reading measure a single kit is on its own, so the grid has one
-   column and the cards do not need to compete for width. */
-.dl.one .dlcards {
-    grid-template-columns: 1fr;
+.dlfoot a {
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
 }

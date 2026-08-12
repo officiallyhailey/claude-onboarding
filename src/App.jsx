@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import TabBar from "./components/TabBar";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
+import Setup from "./pages/Setup";
 import Phase from "./pages/Phase";
 import Appendix from "./pages/Appendix";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ function App() {
             <ErrorBoundary key={pathname} resetKey={pathname}>
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/setup" element={<Setup />} />
                     <Route path="/phase/:slug" element={<Phase />} />
                     <Route path="/appendix" element={<Appendix />} />
                     <Route path="*" element={<NotFound />} />

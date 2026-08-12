@@ -1,0 +1,90 @@
+/* The setup page.
+ *
+ * The least contained page on the site, on purpose. The download cards keep
+ * their surface because they are the things you click; everything below them is
+ * type on the field, separated by a hairline and a gap rather than by an edge.
+ *
+ * A page of instructions is the easiest thing to turn into a stack of boxes,
+ * and the boxes are what make a two-minute job look like an afternoon.
+ */
+
+/* The hero has to share this page's measure, or the title starts at the window
+   edge while every step below it starts 250px further in. */
+.hero.narrow {
+    max-width: 1000px;
+}
+
+.setup {
+    /* Narrower than the landing page's 1500px. This page is read in order
+       rather than scanned, and a command line running the full width of a
+       desktop is a line nobody can follow back to its start. */
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px 20px 40px;
+}
+
+/* A step is a hairline and a heading. That is the entire container. */
+.step {
+    padding-top: 30px;
+    margin-top: 30px;
+    border-top: 1px solid var(--rule);
+}
+
+.step:first-child {
+    padding-top: 12px;
+    margin-top: 0;
+    border-top: none;
+}
+
+.step h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 13px;
+    font-size: clamp(19px, 2.4vw, 23px);
+    line-height: 1.2;
+    color: var(--ink);
+    margin: 0 0 16px;
+}
+
+/* Mono and accent, matching the number chip on the phase cards. It is the one
+   thing on this page allowed to look mechanical, because it is the only thing
+   here that is genuinely an index. */
+.stepn {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent-ink);
+}
+
+/* The prose measure. Wide enough for a table, narrow enough to read. */
+.step > .t,
+.step .t,
+.step .tw,
+.step .sub {
+    max-width: 78ch;
+}
+
+.step .sub {
+    margin-top: 26px;
+}
+
+.setupnext {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+    margin-top: 4px;
+}
+
+@media (max-width: 720px) {
+    .setupnext {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* The wide-card is built for a full-width row on the landing page, so inside a
+   two-up grid its arrow needs to stop being pushed to a far edge. */
+.setupnext .wide-card {
+    align-items: flex-start;
+}

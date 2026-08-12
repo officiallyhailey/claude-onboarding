@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Command from "./Command";
 
-// The download panel.
+// The kits, and the ways of offering them.
 //
 // The zips are packed from phases/ by scripts/build-kits.sh before every build,
 // so what a reader downloads is the same tree this site describes rather than a
 // second copy kept in step by hand.
 //
 // A browser cannot install anything, and pretending otherwise would be the
-// worse design. So this offers the two halves of the real job side by side: the
-// file, and the one command that turns the file into a working setup. The
-// command is generated from window.location, so it carries whatever address
+// worse design. So every arrangement here offers the two halves of the real
+// job: the file, and the commands that turn the file into a working setup. The
+// commands are generated from window.location, so they carry whatever address
 // this copy of the site is actually being served from.
+//
+// The pieces are exported because the Setup page lays them out its own way,
+// with the breakdown of each installer between them. The default export is the
+// compact form, for a phase page that needs one kit in the middle of its prose.
 
 const BASE = import.meta.env.BASE_URL;
 
-const KITS = [
+export const KITS = [
     {
         id: "all",
         file: "claude-onboarding.zip",
@@ -41,6 +47,8 @@ const KITS = [
     },
 ];
 
+export const kitById = (id) => KITS.find((k) => k.id === id) || KITS[0];
+
 const ARROW = (
     <svg
         viewBox="0 0 24 24"
@@ -66,13 +74,35 @@ function readable(bytes) {
 }
 
 /**
- * The command that takes the file from the Downloads folder to installed.
+ * Sizes for the download cards, from the manifest the packing script writes
+ * beside the zips. If it is missing, the cards render without a size rather
+ * than holding up the download they exist to offer.
+ */
+export function useKitSizes() {
+    const [sizes, setSizes] = useState({});
+
+    useEffect(() => {
+        let live = true;
+        fetch(`${BASE}downloads/manifest.json`)
+            .then((r) => (r.ok ? r.json() : {}))
+            .then((json) => live && setSizes(json))
+            .catch(() => {});
+        return () => {
+            live = false;
+        };
+    }, []);
+
+    return sizes;
+}
+
+/**
+ * The commands that take the file from the Downloads folder to installed.
  *
  * `--dry-run` is on its own line above the real run rather than left out,
  * because every guide in this package tells the reader to preview first and a
  * snippet that skipped its own advice would be the thing they copy.
  */
-function steps(kit) {
+export function kitSteps(kit) {
     return [
         `cd ~/Downloads`,
         `unzip ${kit.file}`,
@@ -82,35 +112,13 @@ function steps(kit) {
     ].join("\n");
 }
 
-function Snippet({ label, text }) {
-    const [copied, setCopied] = useState(false);
-
-    const copy = async () => {
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1800);
-        } catch {
-            // Clipboard refused, which happens over plain http and in some
-            // embedded browsers. The text is on screen and selectable.
-            setCopied(false);
-        }
-    };
-
-    return (
-        <div className="prompt">
-            <div className="prompthead">
-                <span className="plab">{label}</span>
-                <button type="button" className={`copybtn${copied ? " ok" : ""}`} onClick={copy}>
-                    {copied ? "Copied" : "Copy"}
-                </button>
-            </div>
-            <pre>{text}</pre>
-        </div>
-    );
+/** The same job without the browser, addressed to wherever this site is served. */
+export function kitCurl(kit) {
+    const url = new URL(`${BASE}downloads/${kit.file}`, window.location.href).href;
+    return `curl -fL ${url} -o ${kit.file} \\\n  && unzip -q ${kit.file} && cd ${kit.folder} && ${kit.run}`;
 }
 
-function Card({ kit, size, lead }) {
+export function KitCard({ kit, size, lead }) {
     return (
         <a className={`dlcard${lead ? " lead" : ""}`} href={`${BASE}downloads/${kit.file}`} download>
             <span className="dlico">{ARROW}</span>
@@ -127,69 +135,45 @@ function Card({ kit, size, lead }) {
 }
 
 /**
- * @param only  a kit id, to show that one on its own. Omitted, all three show
- *              with the whole package leading.
+ * Every kit as a row of cards.
+ *
+ * @param only  a kit id, to show that one on its own.
  */
-function Download({ only }) {
-    const [sizes, setSizes] = useState({});
-
-    // The manifest is written next to the zips by the same script that packs
-    // them. If it is missing, the cards render without a size rather than
-    // holding up the download they exist to offer.
-    useEffect(() => {
-        let live = true;
-        fetch(`${BASE}downloads/manifest.json`)
-            .then((r) => (r.ok ? r.json() : {}))
-            .then((json) => live && setSizes(json))
-            .catch(() => {});
-        return () => {
-            live = false;
-        };
-    }, []);
-
+export function KitCards({ only }) {
+    const sizes = useKitSizes();
     const shown = only ? KITS.filter((k) => k.id === only) : KITS;
-    const lead = shown[0];
-
-    // The manual settings.json merge belongs to Phase 3, so it is only worth
-    // saying where Phase 3 is one of the things on offer.
-    const hooks = shown.some((k) => k.id === "all" || k.id === "p3");
-
-    // The whole package downloads from wherever this site is being served, so
-    // the terminal route needs no address written into it by hand.
-    const url = new URL(`${BASE}downloads/${lead.file}`, window.location.href).href;
 
     return (
-        <section className={`dl${only ? " one" : ""}`}>
-            <div className="dlcards">
-                {shown.map((kit, i) => (
-                    <Card
-                        key={kit.id}
-                        kit={kit}
-                        size={readable(sizes[kit.file])}
-                        lead={!only && i === 0}
-                    />
-                ))}
-            </div>
+        <div className={`dlcards${only ? " one" : ""}`}>
+            {shown.map((kit, i) => (
+                <KitCard
+                    key={kit.id}
+                    kit={kit}
+                    size={readable(sizes[kit.file])}
+                    lead={!only && i === 0}
+                />
+            ))}
+        </div>
+    );
+}
 
-            <Snippet label="Then, in a terminal" text={steps(lead)} />
+/**
+ * One kit and the commands to install it, for a phase page.
+ *
+ * The full arrangement, with what each installer places and the steps that stay
+ * manual, is the Setup page. This is the version that belongs mid-prose.
+ */
+function Download({ only }) {
+    const kit = kitById(only);
 
-            <Snippet
-                label="Or skip the browser entirely"
-                text={`curl -fL ${url} -o ${lead.file} \\\n  && unzip -q ${lead.file} && cd ${lead.folder} && ${lead.run}`}
-            />
-
+    return (
+        <section className="dl">
+            <KitCards only={only} />
+            <Command label="Then, in a terminal" text={kitSteps(kit)} />
             <p className="dlfoot">
                 The installers are additive and never overwrite a file you have filled in, so
-                running one twice is safe.
-                {hooks && (
-                    <>
-                        {" "}
-                        One step is deliberately left to you: the Phase 3 hooks are registered by
-                        merging <code className="i">hooks/settings.snippet.json</code> into your{" "}
-                        <code className="i">~/.claude/settings.json</code>, because a script guessing
-                        at an existing settings file is how settings files get lost.
-                    </>
-                )}
+                running one twice is safe. Where every file lands, and the two steps that stay
+                manual, are on the <Link to="/setup">setup page</Link>.
             </p>
         </section>
     );

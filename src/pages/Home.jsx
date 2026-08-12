@@ -5,7 +5,6 @@ import { packageTree } from "../data/trees";
 import { openedPhases } from "../lib/opened";
 import FileTree from "../components/FileTree";
 import Blocks from "../components/Blocks";
-import Download from "../components/Download";
 
 function Home() {
     const [opened, setOpened] = useState(() => openedPhases());
@@ -145,11 +144,23 @@ function Home() {
                     blocks={[
                         {
                             t: "p",
-                            x: "Phases 1 and 4 are reading, and this site is all of it. Phases 2 and 3 install, and the kits below are what they install. Take the whole package unless you have a reason not to: the [[procedures layer]] Phase 3 installs reads from the [[context layer]] Phase 2 creates, so the two are only useful together.",
+                            x: "Phases 1 and 4 are reading, and this site is all of it. Phases 2 and 3 install. The setup page is the whole of that job in one place: the kits to download, the commands to run, where every file lands, and the two steps left deliberately to you.",
                         },
                     ]}
                 />
-                <Download />
+
+                <Link className="wide-card" to="/setup">
+                    <div>
+                        <h3>Setup</h3>
+                        <p>
+                            Download the package, run one installer, and check it worked. About two
+                            minutes, and nothing it does is destructive.
+                        </p>
+                    </div>
+                    <span className="arr" aria-hidden="true">
+                        &rarr;
+                    </span>
+                </Link>
 
                 <h2>What is in the box</h2>
                 <FileTree tree={packageTree} />

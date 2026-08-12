@@ -178,11 +178,15 @@
     color: var(--ink);
 }
 
+/* `max-width` rather than `width`, so the pill can narrow when the bar has to
+   carry another destination. A fixed 52px cannot shrink, and seven of them plus
+   the bar's padding overflow a 375px phone. */
 .tabs .puck {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
+    width: 100%;
+    max-width: 52px;
     height: 28px;
     border-radius: 999px;
     transition: background 0.2s ease;
@@ -309,10 +313,28 @@
     margin-top: 10px;
 }
 
+/* Four, two, or one. Never three across with a fourth stranded on its own row.
+   auto-fit did that: it fits as many 255px tracks as the width allows, which at
+   a lot of ordinary laptop widths is three, and the last card then sits alone
+   under them looking like an afterthought rather than the fourth phase.
+   Explicit counts cost two media queries and make the set read as a set at
+   every width. The breakpoints are where a track would drop under 255px. */
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 13px;
+}
+
+@media (max-width: 1100px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 580px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 .card {

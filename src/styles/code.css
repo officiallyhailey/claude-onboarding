@@ -164,3 +164,61 @@
 .prompthead .plab {
     margin-left: 0;
 }
+
+/* ---------------- a command, with no panel ---------------- */
+
+/* The unboxed sibling of .shell. A prompt keeps its surface because it is a
+   paragraph of prose you paste into a chat box and needs an edge to say where
+   it stops. A command is three short mono lines, and giving each one a filled
+   rectangle turns a page of instructions into a stack of containers. The rule
+   down the left says "run this" for a fraction of the ink, and it is the same
+   2px accent rule the margin notes already use. */
+.cmd {
+    margin: 2px 0 24px;
+    padding-left: 15px;
+    border-left: 2px solid var(--accent-dim);
+}
+
+.cmdhead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 28px;
+    margin-bottom: 4px;
+}
+
+.cmdlab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--eyebrow);
+    overflow-wrap: anywhere;
+}
+
+/* Beside the label, not pushed to the far edge. The shared .copybtn rule gives
+   it `margin-left: auto`, which is right inside a panel whose width is the
+   block's own; here the block is as wide as the page, and a button a third of a
+   metre from the thing it copies does not read as belonging to it. */
+.cmdhead .copybtn {
+    margin-left: 0;
+}
+
+.cmd pre {
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.72;
+    color: var(--ink);
+    tab-size: 2;
+}
+
+.cmdnote {
+    margin: 9px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--lab);
+    max-width: 66ch;
+}

@@ -4,8 +4,8 @@
 // the two can never disagree about what exists or which one you are on. Adding
 // a destination is one entry here.
 //
-// The tab labels are not the page titles. A tab label is 10px and there are six
-// of them across a phone, so each one is the one word its phase's question
+// The tab labels are not the page titles. A tab label is 10px and they all sit
+// across a phone at once, so each one is the one word its phase's question
 // actually asks: Phase 1 asks what the pieces are, Phase 2 asks how to tell
 // Claude who you are, and so on. Every item keeps a label, because icon-only
 // navigation saves space by making the reader guess, and this theme's inactive
@@ -32,6 +32,18 @@ export const DESTINATIONS = [
         label: "Start",
         full: "The four phases",
         icon: icon(<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />),
+    },
+    {
+        to: "/setup",
+        label: "Setup",
+        full: "Download and install the kits",
+        icon: icon(
+            <>
+                <path d="M12 3.8v9.4" />
+                <path d="M8.2 9.6 12 13.4l3.8-3.8" />
+                <path d="M4.6 16.6v2.6a1 1 0 0 0 1 1h12.8a1 1 0 0 0 1-1v-2.6" />
+            </>
+        ),
     },
     {
         to: "/phase/understanding-claude",
