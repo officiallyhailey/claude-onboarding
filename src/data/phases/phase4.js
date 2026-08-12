@@ -168,6 +168,10 @@ export const phase4 = {
                         ],
                     ],
                 },
+                {
+                    t: "p",
+                    x: "That table is what to check. The four parts after this one are how: reading a [[diff]] you did not write, the tells that something plausible is wrong, telling an honest green from a hollow one, and what to do with code you cannot follow.",
+                },
                 { t: "sub", x: "On autonomy and safety" },
                 {
                     t: "p",
@@ -182,9 +186,320 @@ export const phase4 = {
         },
 
         // ---------------------------------------------------------------
+        // The four parts that follow are the how of verification. Section 03
+        // is the principles and it used to be the whole answer, which meant a
+        // reader who wanted the method had nowhere to go.
+        {
+            id: "diff",
+            num: "04",
+            title: "Reading the diff",
+            heading: "How do I review a change I did not write?",
+            blocks: [
+                {
+                    t: "thesis",
+                    x: "Reviewing your own code and reviewing an agent's are different jobs. You wrote yours in the order it appears. For this one you have no map, so you need a reading order.",
+                },
+                {
+                    t: "p",
+                    x: "The instinct is to read from the top of the first file to the bottom of the last, at one speed. That is the slowest pass available and it spreads your attention evenly over code that deserves very different amounts of it. Read in this order instead, and stop the moment something does not add up rather than pressing on to the end.",
+                },
+                {
+                    t: "ol",
+                    steps: true,
+                    items: [
+                        "The file list, before a single line of code. It answers one question: did this touch what you expected? A file you did not expect is the highest-value finding on the page and it costs five seconds.",
+                        "The deletions. A removed line is behaviour you used to have. Deletions are also the part any summary explains least, because nothing is there to describe.",
+                        "Edits to code that already worked, line by line, slowly. This is where [[regression|regressions]] come from. New code that is wrong usually fails the first time you run it; a changed line in code that already worked can be wrong for weeks.",
+                        "New code you will own: new functions, new state, new error branches, new dependencies. Normal speed, but all of it, because this is what you get asked about in review and what you will be debugging later.",
+                        "Everything mechanical, at a skim. Renames, formatting, import order, generated files, lockfiles. You are checking the shape rather than the lines, and a rename that also changed twelve lines of logic is not a rename.",
+                    ],
+                },
+                {
+                    t: "shell",
+                    x: `git diff --stat                        what was touched, and by how much
+git diff --diff-filter=D --name-only   files removed outright
+git diff main...HEAD                   the whole branch, not the last edit
+git diff -U15 src/api/auth.js          one file, with more context
+git diff --word-diff                   what changed on a reflowed line`,
+                },
+                { t: "sub", x: "Three things a diff cannot tell you" },
+                {
+                    t: "vocab",
+                    items: [
+                        [
+                            "Whether anything is missing",
+                            "A diff shows what changed, never what should have changed and did not. Ask it directly: which callers of this function did not need updating, and why not? In React Native, did the other platform need the same edit? In Next.js, does the server-side path have the same problem? In Express, is there a second route doing this the old way?",
+                        ],
+                        [
+                            "Whether a test was removed or weakened",
+                            "A suite that goes green after a change which deleted test lines has not told you anything. Look at the test files in the stat line: lines gone with none added is the shape to catch.",
+                        ],
+                        [
+                            "Whether it runs",
+                            "A diff is text. Only the [[quality gate]] is evidence, and only if you watched it run rather than being told it passed.",
+                        ],
+                    ],
+                },
+                {
+                    t: "note",
+                    kind: "rule",
+                    lab: "Read it before you ask about it",
+                    x: "Asking what changed gets you a summary written by the thing you are checking. It will be fluent, it will be mostly right, and it will not mention the part that is wrong, because it does not know which part that is.",
+                },
+            ],
+        },
+
+        // ---------------------------------------------------------------
+        {
+            id: "plausible",
+            num: "05",
+            title: "Plausible but wrong",
+            heading: "What does a wrong answer look like when it looks right?",
+            blocks: [
+                {
+                    t: "thesis",
+                    x: "Wrong output rarely looks wrong. It looks like the code you would have written yourself if you knew slightly less than you do. These are the tells.",
+                },
+                {
+                    t: "p",
+                    x: "None of these prove a bug. Each one is a reason to stop and check one specific thing, and that is what makes them worth memorising: they turn a vague unease into a two-minute check with an answer at the end.",
+                },
+                {
+                    t: "numtable",
+                    head: ["Signal", "What it usually means", "Check"],
+                    rows: [
+                        [
+                            "An import, package or method you have never seen",
+                            "A gap was filled with something that sounds like it ought to exist",
+                            "`npm ls the-package`, then open the export in `node_modules` or the docs for the version you actually have",
+                        ],
+                        [
+                            "The code matches a different version of the library",
+                            "Training data is not your lockfile, and React Native, Next.js and Express all move",
+                            "Check the installed version, then that version's docs for the option or hook used",
+                        ],
+                        [
+                            "A [[magic number]] or a config key from nowhere",
+                            "A plausible default was invented: a 3000ms timeout, five retries, an env var nothing else reads",
+                            "grep the repo for it. If it appears exactly once, nothing agreed to it",
+                        ],
+                        [
+                            "The fix sits in the layer that was easiest to reach",
+                            "A symptom was patched where it surfaced rather than where it started",
+                            "Ask what the value is when it arrives at that line, and where it first became wrong",
+                        ],
+                        [
+                            "A `try`/`catch` that logs and carries on",
+                            "The failure path was made quiet rather than handled",
+                            "Decide what should happen when it fails, then confirm the code does that",
+                        ],
+                        [
+                            "The change is bigger than the request",
+                            "An unrelated refactor rode along with the fix",
+                            "Split it. A fix you can review on its own is a fix you can revert on its own",
+                        ],
+                        [
+                            "Tests were edited in the same change as the fix",
+                            "The [[assertion|assertions]] may have been moved to fit the code",
+                            "Read the test [[hunk|hunks]] before the source ones, and ask what they asserted before",
+                        ],
+                        [
+                            "The explanation is more certain than the code",
+                            "Confidence is generated, not measured. It is not a signal about correctness",
+                            "Ask what would have to be true for this to be wrong, then check that thing",
+                        ],
+                    ],
+                },
+                {
+                    t: "note",
+                    lab: "The question that catches the most",
+                    x: "Why does this fix the problem? If you cannot answer in one sentence that names a cause, you have a change that makes the symptom go away. That is a different thing, and it comes back.",
+                },
+                {
+                    t: "prompt",
+                    lab: "Paste before you read the diff",
+                    x: `Before I review this: what are you least sure about?
+
+List anything you assumed about this codebase but could not
+verify from the files you read, any API or option you used
+without confirming it exists in the installed version, and any
+case you know is not handled.
+
+If there is nothing, say so plainly rather than filling the list.`,
+                    done: "You have a short list of specific things to check, and you check them yourself rather than taking the list as reassurance.",
+                },
+            ],
+        },
+
+        // ---------------------------------------------------------------
+        {
+            id: "tests",
+            num: "06",
+            title: "Green that proves something",
+            heading: "How do I tell a real green from a hollow one?",
+            blocks: [
+                {
+                    t: "thesis",
+                    x: "A passing suite tells you the code survived the inputs somebody chose. Whether those inputs could ever have failed is a different question, and it is the one that matters.",
+                },
+                {
+                    t: "p",
+                    x: "The risk with agent-written tests is not laziness, it is agreement. When one reading of the problem produces both the code and the tests, the two agree with each other whether or not either is right. A suite written from the implementation passes by construction, and it will keep passing while the bug ships.",
+                },
+                { t: "sub", x: "The check that settles it" },
+                {
+                    t: "p",
+                    x: "Tools call this [[mutation testing]]. Done by hand, on the one [[assertion]] you care about, it takes a minute.",
+                },
+                {
+                    t: "ol",
+                    steps: true,
+                    items: [
+                        "Pick the assertion that would matter most if it were wrong.",
+                        "Break the code underneath it, crudely: invert the condition, return a constant, delete the line, change `>=` to `>`.",
+                        "Run the test. It has to go red, and the failure has to name the thing you broke. Red for an unrelated reason does not count.",
+                        "Put the code back and run it again. Green.",
+                    ],
+                },
+                {
+                    t: "p",
+                    x: "If it stayed green at step three, that test does not test that. Fix it or delete it. A test that cannot fail is worse than no test at all, because it is confidence nobody earned.",
+                },
+                { t: "sub", x: "What a hollow test looks like" },
+                {
+                    t: "table",
+                    head: ["Tell", "Why it passes anyway"],
+                    rows: [
+                        [
+                            "It only asserts `toBeDefined()`, `toBeTruthy()` or `not.toBeNull()`",
+                            "Nearly any return value satisfies that, including the wrong one and an error object",
+                        ],
+                        [
+                            "The thing under test is mocked",
+                            "A mocked `fetch` resolving your own fixture proves the fixture parses. Mock the boundary, never the subject",
+                        ],
+                        [
+                            "Every case is the [[happy path]]",
+                            "Production is the empty list, the expired token, the 500 from upstream, and the second tap before the first finished",
+                        ],
+                        [
+                            "A [[snapshot test]] written after the code",
+                            "A snapshot records what the code does today, bug included. It came from the output, not from the requirement",
+                        ],
+                        [
+                            "A stray `.only` or `.skip`",
+                            "The suite is green because most of it never ran. Read the test count, not the colour",
+                        ],
+                        [
+                            "[[coverage|Coverage]] went up and nothing else changed",
+                            "Coverage proves the lines executed. Nothing in it checks what they produced",
+                        ],
+                    ],
+                },
+                {
+                    t: "versus",
+                    weak: {
+                        text: `it("returns the user", async () => {
+  const res = await get("/users/1");
+  expect(res.status).toBe(200);
+  expect(res.body).toBeDefined();
+});`,
+                        why: "Passes whether the body is the user, an empty object, or an error the route sent with a 200 by mistake. Break the handler and it stays green.",
+                    },
+                    strong: {
+                        text: `it("returns the user", async () => {
+  const res = await get("/users/1");
+  expect(res.status).toBe(200);
+  expect(res.body).toEqual({
+    id: 1, email: "ana@a.co"
+  });
+});
+
+it("404s if missing", async () => {
+  const res = await get("/users/99");
+  expect(res.status).toBe(404);
+});`,
+                        why: "Asserts the actual shape, and covers the branch that breaks in production, which is the row not being there. Change that 404 to a 200 and this goes red on the line that says so.",
+                    },
+                },
+                {
+                    t: "note",
+                    kind: "rule",
+                    lab: "For a bug, ask for the failing test first",
+                    x: "The cheapest verification in this phase. A test that failed before the fix and passes after it is evidence. A test written after the fix is a description of the code.",
+                },
+                {
+                    t: "prompt",
+                    lab: "Paste when you report a bug",
+                    x: `Do not fix this yet.
+
+First write one test that reproduces it, and nothing else. No
+source changes. Tell me the exact command to run it.
+
+I will run it and confirm it fails for the right reason. Then
+fix the code, change nothing but the fix, and we run it again.`,
+                    done: "You watched it fail, you watched it pass, and the only source change between the two is the fix.",
+                },
+            ],
+        },
+
+        // ---------------------------------------------------------------
+        {
+            id: "understand",
+            num: "07",
+            title: "Code you cannot follow",
+            heading: "What do I do when I do not understand what Claude wrote?",
+            blocks: [
+                {
+                    t: "thesis",
+                    x: "Not following a change is normal and says nothing about you. Shipping it anyway is the problem, and asking for an explanation is only sometimes the fix.",
+                },
+                {
+                    t: "p",
+                    x: "The standing rule is that you stay responsible for what you ship. That does not mean knowing every API in the diff before you start. It means not accepting a change you could not explain in review, or debug at nine on a Friday when it breaks. When a [[hunk]] will not resolve, work up this ladder and stop at the rung that answers it.",
+                },
+                {
+                    t: "ol",
+                    steps: true,
+                    items: [
+                        "Name the confusion in one sentence. Not I do not get this, but I do not know why the dependency array is `[user.id]` rather than `[user]`. Writing that sentence answers it surprisingly often, and when it does not you are left holding a question worth asking.",
+                        "Ask for the why, not the what. The code already says what. Ask what breaks if this line is removed, what the alternative was and why it lost, and what happens on the failure path.",
+                        "Check the answer against the source rather than the explanation. Both came from the same place, so an explanation can be wrong in the same direction as the code and just as fluently. Open the installed version's docs, or its types in `node_modules`, and confirm the API does what you were told.",
+                        "Make the running code prove it. Log the value, set a breakpoint, change an input and watch the output move. Behaviour on your machine is the one thing an explanation cannot fake.",
+                        "Ask for the version you could have written: rewrite this using only patterns already in this codebase, in the plainest form, even if it comes out longer. Clever code you cannot maintain is a worse outcome than verbose code you can.",
+                    ],
+                },
+                {
+                    t: "prompt",
+                    lab: "Paste with the hunk you are stuck on",
+                    x: `Explain this the way a reviewer would, not the way its author would.
+
+For each hunk: what it does, why this way rather than the obvious
+alternative, and what breaks if it is removed.
+
+Then list what you are not certain about here, and anything that
+depends on a version or a behaviour you cannot see from this repo.
+Do not restate the code in prose.`,
+                    done: "You could take every hunk through a review out loud, and you know which parts are still unverified.",
+                },
+                {
+                    t: "note",
+                    kind: "warn",
+                    lab: "When you will actually need to understand it",
+                    x: "Not now. When it breaks, in production, in a hurry, with someone waiting. Reading it for the first time at that moment is the expensive version of reading it at this one.",
+                },
+                {
+                    t: "note",
+                    lab: "The answer that is always available",
+                    x: "Revert it and ask for it in smaller pieces. A change you cannot follow is one nobody reviewing your [[pull request]] can follow either, and the smaller version costs one more prompt.",
+                },
+            ],
+        },
+
+        // ---------------------------------------------------------------
         {
             id: "feedback",
-            num: "04",
+            num: "08",
             title: "The feedback loop",
             heading: "How does my system get better over time?",
             blocks: [
@@ -224,7 +539,7 @@ export const phase4 = {
         // ---------------------------------------------------------------
         {
             id: "rhythm",
-            num: "05",
+            num: "09",
             title: "The maintenance rhythm",
             heading: "What do I do daily, weekly, monthly?",
             blocks: [
@@ -275,7 +590,7 @@ export const phase4 = {
         // ---------------------------------------------------------------
         {
             id: "professional",
-            num: "06",
+            num: "10",
             title: "Working professionally with AI",
             heading: "How do I stay honest and credible?",
             blocks: [
@@ -310,7 +625,7 @@ export const phase4 = {
         // ---------------------------------------------------------------
         {
             id: "failures",
-            num: "07",
+            num: "11",
             title: "Failure modes",
             heading: "What do I get wrong, and how do I fix it?",
             blocks: [
@@ -326,6 +641,16 @@ export const phase4 = {
                             "Trusting done without reading the diff or running the gate",
                             "Confident, plausible, wrong code ships",
                             "Read every diff; green gate before you accept anything",
+                        ],
+                        [
+                            "Accepting a green suite you never read",
+                            "Tests written from the implementation agree with it whether or not it is right",
+                            "Break the code under the assertion you care about and watch that test go red",
+                        ],
+                        [
+                            "Shipping a change you could not explain",
+                            "The moment you need to understand it is the moment it breaks, in a hurry",
+                            "Work up the ladder, or revert it and ask for it in smaller pieces",
                         ],
                         [
                             "Delegating chatty work to a subagent",
@@ -365,7 +690,7 @@ export const phase4 = {
         // ---------------------------------------------------------------
         {
             id: "leaves",
-            num: "08",
+            num: "12",
             title: "Where this leaves you",
             heading: "The setup is finished. The practice is not.",
             blocks: [

@@ -268,6 +268,16 @@ export const TERMS = {
         note: "Reading it in full before accepting anything is the single habit Phase 4 asks for most. Not the files you remember touching: all of them.",
         auto: true,
     },
+    hunk: {
+        def: "One contiguous block of changed lines in a diff, with a few unchanged lines either side for context.",
+        note: "The unit to review one at a time. If you cannot say what a hunk is for, that is the one to ask about rather than the file it sits in.",
+        auto: true,
+    },
+    regression: {
+        def: "Something that used to work and does not any more.",
+        note: "Why edits to existing code deserve a slower read than new code. New code that is wrong usually fails the first time you run it; a changed line in code that already worked can be wrong for weeks.",
+        auto: true,
+    },
     commit: {
         def: "One saved point in a repository's history, with a message saying what changed and why.",
         note: "The pre-commit-guard hook runs before one is made, which is the last moment a secret can still be stopped.",
@@ -409,6 +419,31 @@ export const TERMS = {
     coverage: {
         def: "How much of your code the tests actually execute.",
         note: "High coverage proves the lines ran, not that they are correct. Phase 4's answer is to break the code and watch a test go red.",
+        auto: true,
+    },
+    assertion: {
+        def: "The line in a test that states what must be true, and fails the test when it is not.",
+        note: "A test whose only assertion is that something is defined cannot fail for the reason you care about. It is the first thing Phase 4 part 6 teaches you to spot.",
+        auto: true,
+    },
+    "mutation testing": {
+        def: "Deliberately breaking the code to check that a test notices.",
+        note: "Tools automate it, but the version that matters takes a minute by hand: break the code under one assertion, watch the test go red, put it back. It is the difference between a green suite and a green suite that means something.",
+        auto: true,
+    },
+    "happy path": {
+        def: "The run where everything goes right: valid input, the record exists, the network answers.",
+        note: "The easiest path to test and the least likely to break. A suite where every case is one of these has not been near the code that fails in production.",
+        auto: true,
+    },
+    "snapshot test": {
+        def: "A test that records the output of a component or function and fails when it changes.",
+        note: "Worth treating carefully when it was written after the code: it records what the code does today, bug included, because it came from the output rather than from the requirement.",
+        auto: true,
+    },
+    "magic number": {
+        def: "A bare literal sitting in code with no name and no explanation: a timeout, a limit, a retry count.",
+        note: "Worth a second look in generated code, because a plausible default is easy to invent and hard to notice. grep for it: if it appears exactly once, nothing agreed to it.",
         auto: true,
     },
     "smoke check": {
@@ -639,7 +674,7 @@ export const TERMS = {
     },
     verify: {
         def: "To prove something is true rather than accept that it is.",
-        note: "The whole of Phase 4 part 3. Green tests you did not read are worth less than one test you watched fail and then pass.",
+        note: "Phase 4 part 3 is the principle and parts 4 to 7 are the method. Green tests you did not read are worth less than one test you watched fail and then pass.",
         auto: true,
     },
 };
