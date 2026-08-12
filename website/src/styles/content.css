@@ -174,12 +174,9 @@
    the window width: it is whether the container this note sits in reserves a
    margin column to float into. Only `.doc > main` does, and only from 1180px.
 
-   THE COLLAPSED FORM IS THE DEFAULT, and that ordering is deliberate. The float
-   used to be the default and was scoped to nothing, so on the landing page,
-   where the content spans the full width and there is no third column at all, a
-   note floated into a column that did not exist and was clipped off the side of
-   the screen. Making the safe form the default means a new container cannot
-   inherit that bug by existing. */
+   THE COLLAPSED FORM IS THE DEFAULT, and that ordering is deliberate. A float
+   needs a margin column to land in and most containers do not reserve one, so
+   the form that works anywhere is the one a new container should inherit. */
 
 .note {
     display: none;

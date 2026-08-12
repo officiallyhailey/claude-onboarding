@@ -171,10 +171,6 @@ export const phase4 = {
                 { t: "sub", x: "On autonomy and safety" },
                 {
                     t: "p",
-                    // "behind a prompt" meant a confirmation dialog, which is a
-                    // second sense of a word this package spends twelve sections
-                    // defining as an instruction to a model. Reworded rather
-                    // than left for the reader to disambiguate.
                     x: "An agent trades predictability for reach. You buy the predictability back with constraints. Keep destructive git operations behind a confirmation rather than blanket-allowed, let the pre-commit-guard hook enforce the absolutes, and never point a dynamic workflow at code you are not prepared to have edited, because its subagents auto-approve edits.",
                 },
                 {

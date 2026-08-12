@@ -92,13 +92,10 @@ function autoLink(text, used, keyBase) {
     // markup never reaches this function.
     if (BARE.test(text.trim())) return [text];
 
-    // Collect every candidate first, then choose between them, rather than
-    // taking the first match and recursing on what is left. The recursive
-    // version only ever scanned text AFTER its first hit, so a term earlier in
-    // the sentence than the longest one was silently skipped: in "An agent
-    // trades predictability... never point a dynamic workflow at code", the
-    // agent went unmarked because `dynamic workflow` is the longer term and
-    // everything before it was emitted untouched.
+    // Every candidate is collected first, then chosen between, so the whole
+    // string is considered at once. Taking the first match and recursing on the
+    // remainder would only scan text after that match, dropping any term that
+    // appears earlier in the sentence than the longest one.
     const hits = [];
     for (const { term, re } of AUTO) {
         if (used.has(term)) continue;

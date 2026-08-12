@@ -13,12 +13,11 @@ const MIN_ROOM = 130;
 /**
  * Position for a popover anchored to `el`, in viewport coordinates.
  *
- * Side is chosen by measuring, not by a fixed threshold. It used to go above
- * whenever the anchor was more than 180px down the page, which was fine for a
- * one-line glossary definition and wrong for anything taller: a note with three
- * paragraphs anchored near the bottom would open upward and run off the top of
- * the screen. Now it takes whichever side has more room and reports how much,
- * so the box can cap itself and scroll rather than overflow.
+ * The side is chosen by measuring rather than by a fixed threshold, because the
+ * box varies in height: a one-line glossary definition and a three-paragraph
+ * callout need different amounts of room. It takes whichever side has more
+ * space and reports how much, so the box can cap its height and scroll inside
+ * itself rather than run off the edge of the screen.
  *
  * Anchored by its bottom edge when above, rather than by its top with a
  * transform: the entry animation animates transform, an animation beats a

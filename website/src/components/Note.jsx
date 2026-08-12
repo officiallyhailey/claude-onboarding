@@ -14,8 +14,7 @@ import Popover from "./Popover";
 //
 //   - A narrow window, where there is no third column to float into.
 //   - A full-width container with no margin column at all, like the landing
-//     page. A margin note there floated into a column that does not exist and
-//     was clipped off the side of the screen, which is the bug this fixes.
+//     page, where a float would have no column to land in.
 //
 // Collapsing rather than falling back to the full block in the flow is the
 // point: a caveat that costs one line until it is asked for is what the margin

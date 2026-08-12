@@ -33,11 +33,12 @@ say "  context: ${CONTEXT_DIR}"
 say "  config:  ${CLAUDE_HOME}"
 [ "$DRY_RUN" -eq 1 ] && say "  MODE:    dry run (nothing will change)"
 
-# BSD cp, which is what macOS ships, exits 1 when -n skips a file that already
-# exists. GNU cp exits 0. Skipping is the whole point of a no-clobber install, so
-# under `set -e` that status would abort the script: every re-run died at the
-# first copy, and install-all.sh never reached the second phase. The `|| true` on
-# each copy below is what makes "safe to re-run" actually true on a Mac.
+# Each no-clobber copy below ends in `|| true`.
+#
+# BSD cp, which macOS ships, exits 1 when -n skips a file that already exists.
+# GNU cp exits 0 for the same thing. Skipping existing files is the intended
+# behaviour of this installer, so under `set -e` that exit status would stop the
+# script partway through on any run where the files are already in place.
 
 # 1. Private context tree (no-clobber protects anything you have already filled in)
 step "1. Install private context tree -> ${CONTEXT_DIR}"
