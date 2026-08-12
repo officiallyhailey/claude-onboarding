@@ -45,8 +45,9 @@ function Home() {
                         Four phases, from writing code to running <em>a system</em>.
                     </h1>
                     <p className="sell">
-                        You already know how to build. This is the part nobody teaches: how to work
-                        with an agent so it actually knows who you are and how you work.
+                        Set it up once, and every session starts already knowing your stack, your
+                        rules and how you work. Then the part that keeps paying off: knowing what to
+                        hand over, and how to check what comes back.
                     </p>
                     <div className="cta">
                         <Link className="go" to="/phase/understanding-claude">
