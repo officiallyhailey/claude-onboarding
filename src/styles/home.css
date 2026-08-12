@@ -213,22 +213,51 @@
 
 /* ---------------- the four phases, as hairlines ---------------- */
 
+/* ONE grid for the whole set, with each row a subgrid of it.
+ *
+ * Four separate grids each sized their tracks from their own content, and the
+ * last column is `auto`: "Installs the workflow kit" is 112px wider than "Read
+ * only", that width came out of the tracks before it, and every row therefore
+ * started its description somewhere different. The numbers and titles lined up
+ * only because the first two tracks are fixed and min-bounded.
+ *
+ * Subgrid fixes it without giving up content sizing: the tracks are measured
+ * once across all four rows, so the widest label sets the column and every row
+ * agrees. The row keeps its own box, which the hover wash and the hairline
+ * need, so `display: contents` is not an option here.
+ *
+ * The title column is min-bounded at 260px so the longest of the four still
+ * sits on one line. A wrapped title makes its row taller than the other three,
+ * and with no boxes the rows have nothing but even rhythm holding them
+ * together. */
 .rows {
+    display: grid;
+    grid-template-columns: 62px minmax(260px, 1.2fr) 1.35fr auto;
+    column-gap: 26px;
     padding-bottom: 6vh;
 }
 
-/* The title column is sized so the longest of the four still sits on one line.
-   A wrapped title makes its row taller than the other three, and with no boxes
-   the rows have nothing but even rhythm holding them together. */
 .prow {
     position: relative;
+    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 62px minmax(260px, 1.2fr) 1.35fr auto;
-    gap: 26px;
+    grid-template-columns: subgrid;
     align-items: baseline;
     padding: 30px 0;
     border-top: 1px solid var(--rule);
     color: inherit;
+}
+
+/* Without subgrid the rows cannot share a measurement, so the last column takes
+   a fixed width instead. Uniform, at the cost of sizing to its content. */
+@supports not (grid-template-columns: subgrid) {
+    .rows {
+        display: block;
+    }
+    .prow {
+        grid-template-columns: 62px minmax(260px, 1.2fr) 1.35fr 190px;
+        column-gap: 26px;
+    }
 }
 
 .prow:last-of-type {
@@ -316,9 +345,20 @@
 }
 
 @media (max-width: 860px) {
-    .prow {
+    /* Two columns now, and the tracks still come from the parent so the four
+       rows keep agreeing with each other. */
+    .rows {
         grid-template-columns: 44px 1fr;
-        gap: 6px 16px;
+        column-gap: 16px;
+    }
+    .prow {
+        row-gap: 6px;
+    }
+    @supports not (grid-template-columns: subgrid) {
+        .prow {
+            grid-template-columns: 44px 1fr;
+            column-gap: 16px;
+        }
     }
     .prow .pd,
     .prow .pk {
