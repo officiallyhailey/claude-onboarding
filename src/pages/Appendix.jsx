@@ -154,8 +154,8 @@ function Appendix() {
                     <div className="num">Appendix</div>
                     <h1>Look it up</h1>
                     <p className="lede">
-                        Every defined word, every file, every tree, and the eleven points that could not
-                        be fully verified. Nothing here assumes you have read a phase.
+                        Every defined word, every file, every tree, and the points that could not be
+                        fully verified. Nothing here assumes you have read a phase.
                     </p>
                 </div>
 
@@ -221,7 +221,7 @@ function Appendix() {
                         blocks={[
                             {
                                 t: "thesis",
-                                x: "Everything in this package was checked against Anthropic's official documentation in August 2026. These eleven points are flagged because they could not be fully confirmed, or because the official sources disagree with each other.",
+                                x: "Everything in this package was checked against Anthropic's official documentation in August 2026. These points are flagged because they could not be fully confirmed, because the official sources disagree with each other, or because they rest on outside research whose numbers should not be carried further than the study that produced them.",
                             },
                             {
                                 t: "p",

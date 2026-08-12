@@ -1,10 +1,11 @@
 // The verification notes.
 //
-// Eleven points that could not be fully confirmed against Anthropic's official
-// documentation in August 2026, or where the official sources disagree with
-// each other. They are in the appendix rather than in a footnote because a
-// reader deciding whether to rely on something needs to be able to find the
-// caveat without having read the page it belongs to.
+// The points that could not be fully confirmed against Anthropic's official
+// documentation in August 2026, where the official sources disagree with each
+// other, or where the page rests on outside research and the figure should not
+// travel further than the study behind it. They are in the appendix rather than
+// in a footnote because a reader deciding whether to rely on something needs to
+// be able to find the caveat without having read the page it belongs to.
 
 export const VERIFICATION = [
     [
@@ -46,6 +47,18 @@ export const VERIFICATION = [
     [
         "Routines",
         "Documented as a research preview. Behaviour and availability may change, so re-verify before relying on one or teaching it to someone else.",
+    ],
+    [
+        "The package-hallucination figures in Phase 4 part 5",
+        "About one in twenty for commercial models and one in five for open-source ones, measured across sixteen models in a 2025 study of generated code samples, not against Claude specifically and not against whichever model you are running. The repetition figure, that most invented names come back when the same prompt is asked again, is from the same paper. Treat the order of magnitude as the point rather than the number.",
+    ],
+    [
+        "The productivity and security findings in Phase 4 part 3",
+        "METR's 19% result was measured on early-2025 tools, with experienced developers working in repositories they knew well, and METR itself now labels it historical rather than current. The security finding is from a 2023 study on a model far older than anything you would use now. Both are cited for the perception gap they measured, which has held up better than either individual number.",
+    ],
+    [
+        "The four hundred line review threshold in Phase 4 part 4",
+        "A working rule of thumb rather than a measured constant. The research behind it says review effectiveness drops as change size grows, not that any specific number is the cliff. Pick a threshold you can actually hold and keep it.",
     ],
     [
         "The cross-platform product names",

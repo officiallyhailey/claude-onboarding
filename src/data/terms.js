@@ -384,6 +384,42 @@ export const TERMS = {
         note: "`disallowedTools` is one. It is subtracted from whatever the agent would otherwise inherit.",
         auto: true,
     },
+    "prompt injection": {
+        def: "Instructions hidden in content an agent reads, which it then follows as though you had typed them.",
+        note: "First on OWASP's list of LLM risks two editions running. The practical consequence for Phase 4: a diff can be wrong for a reason that is not in the diff.",
+        auto: true,
+    },
+    "excessive agency": {
+        def: "Giving a model more permission, tooling or autonomy than the job actually needs.",
+        note: "OWASP's name for it. The fix is unglamorous: the smallest tool list that does the work, and a confirmation on anything you cannot undo.",
+        auto: true,
+    },
+    "least privilege": {
+        def: "Giving something the smallest set of permissions that still lets it do its job.",
+        note: "An old idea that got load-bearing again. An agent cannot be talked into an action it was never given the tool for.",
+        auto: true,
+    },
+    "blast radius": {
+        def: "How much is affected when something goes wrong.",
+        note: "The question worth asking before granting a permission rather than after. With an agent it is exactly the set of actions you auto-approved.",
+        auto: true,
+    },
+    pii: {
+        term: "PII",
+        def: "Personally identifiable information: anything that identifies a real person, alone or combined with something else.",
+        note: "A real name, email, address or order history in a prompt is a disclosure about someone who was not asked. An invented fixture debugs the same bug.",
+        auto: true,
+    },
+    slopsquatting: {
+        def: "Registering a package name that AI tools invent, then waiting for someone to install it.",
+        note: "It works because the invented names repeat rather than being random, so a name that came back twice is worth squatting on.",
+        auto: true,
+    },
+    postmortem: {
+        def: "The write-up after an incident: what happened, why, and what would have caught it.",
+        note: "Which tool wrote the code is not an answer to any of the three.",
+        auto: true,
+    },
     "lifecycle event": {
         def: "A moment the harness reaches every time, like just before a tool runs or just after a file is edited.",
         note: "Hooks attach to these. That is what makes them deterministic: the moment arrives whether or not anyone remembered it.",
