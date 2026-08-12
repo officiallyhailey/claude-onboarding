@@ -30,26 +30,32 @@ say "  kit:     ${KIT_DIR}"
 say "  config:  ${CLAUDE_HOME}"
 [ "$DRY_RUN" -eq 1 ] && say "  MODE:    dry run (nothing will change)"
 
+# BSD cp, which is what macOS ships, exits 1 when -n skips a file that already
+# exists. GNU cp exits 0. Skipping is the whole point of a no-clobber install, so
+# under `set -e` that status would abort the script: every re-run died at the
+# first copy, and install-all.sh never reached the second phase. The `|| true` on
+# each copy below is what makes "safe to re-run" actually true on a Mac.
+
 step "1. Skills -> ${CLAUDE_HOME}/skills"
 do_ "mkdir -p '${CLAUDE_HOME}/skills'"
-do_ "cp -Rn '${KIT_DIR}/skills/.' '${CLAUDE_HOME}/skills/'"
+do_ "cp -Rn '${KIT_DIR}/skills/.' '${CLAUDE_HOME}/skills/' || true"
 
 step "2. Subagents -> ${CLAUDE_HOME}/agents"
 do_ "mkdir -p '${CLAUDE_HOME}/agents'"
-do_ "cp -Rn '${KIT_DIR}/agents/.' '${CLAUDE_HOME}/agents/'"
+do_ "cp -Rn '${KIT_DIR}/agents/.' '${CLAUDE_HOME}/agents/' || true"
 
 step "3. Dynamic workflows -> ${CLAUDE_HOME}/workflows"
 do_ "mkdir -p '${CLAUDE_HOME}/workflows'"
-do_ "cp -Rn '${KIT_DIR}/workflows/.' '${CLAUDE_HOME}/workflows/'"
+do_ "cp -Rn '${KIT_DIR}/workflows/.' '${CLAUDE_HOME}/workflows/' || true"
 
 step "4. Hook scripts -> ${CLAUDE_HOME}/hooks"
 do_ "mkdir -p '${CLAUDE_HOME}/hooks'"
-do_ "cp -Rn '${KIT_DIR}/hooks/'*.sh '${CLAUDE_HOME}/hooks/'"
+do_ "cp -Rn '${KIT_DIR}/hooks/'*.sh '${CLAUDE_HOME}/hooks/' || true"
 do_ "chmod +x '${CLAUDE_HOME}/hooks/'*.sh"
 
 step "5. Stack config -> ${CONTEXT_DIR}/config/stack.md"
 do_ "mkdir -p '${CONTEXT_DIR}/config'"
-do_ "cp -n '${KIT_DIR}/config/stack.md' '${CONTEXT_DIR}/config/stack.md'"
+do_ "cp -n '${KIT_DIR}/config/stack.md' '${CONTEXT_DIR}/config/stack.md' || true"
 
 step "Done"
 say "Two manual steps remain (on purpose):"

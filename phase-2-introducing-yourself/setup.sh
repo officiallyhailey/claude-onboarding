@@ -33,10 +33,16 @@ say "  context: ${CONTEXT_DIR}"
 say "  config:  ${CLAUDE_HOME}"
 [ "$DRY_RUN" -eq 1 ] && say "  MODE:    dry run (nothing will change)"
 
+# BSD cp, which is what macOS ships, exits 1 when -n skips a file that already
+# exists. GNU cp exits 0. Skipping is the whole point of a no-clobber install, so
+# under `set -e` that status would abort the script: every re-run died at the
+# first copy, and install-all.sh never reached the second phase. The `|| true` on
+# each copy below is what makes "safe to re-run" actually true on a Mac.
+
 # 1. Private context tree (no-clobber protects anything you have already filled in)
 step "1. Install private context tree -> ${CONTEXT_DIR}"
 do_ "mkdir -p '${CONTEXT_DIR}'"
-do_ "cp -Rn '${KIT_DIR}/claude-context/.' '${CONTEXT_DIR}/'"
+do_ "cp -Rn '${KIT_DIR}/claude-context/.' '${CONTEXT_DIR}/' || true"
 
 # 2. Global gitignore so the private context never lands in a repo
 step "2. Ensure ${GIT_IGNORE} ignores the private context"
@@ -51,8 +57,8 @@ fi
 # 3. Commands and agents scaffold into ~/.claude (no-clobber)
 step "3. Install slash commands and agents scaffold -> ${CLAUDE_HOME}"
 do_ "mkdir -p '${CLAUDE_HOME}/commands' '${CLAUDE_HOME}/agents'"
-do_ "cp -Rn '${KIT_DIR}/dot-claude/commands/.' '${CLAUDE_HOME}/commands/'"
-do_ "cp -Rn '${KIT_DIR}/dot-claude/agents/.' '${CLAUDE_HOME}/agents/'"
+do_ "cp -Rn '${KIT_DIR}/dot-claude/commands/.' '${CLAUDE_HOME}/commands/' || true"
+do_ "cp -Rn '${KIT_DIR}/dot-claude/agents/.' '${CLAUDE_HOME}/agents/' || true"
 
 # 4. Wire @imports into the personal CLAUDE.md (append once, after a backup)
 step "4. Wire @imports into ${CLAUDE_MD}"
