@@ -46,8 +46,8 @@ function Home() {
                     </h1>
                     <p className="sell">
                         Set it up once, and every session starts already knowing your stack, your
-                        rules and how you work. Then the part that keeps paying off: knowing what to
-                        hand over, and how to check what comes back.
+                        rules and how you work. After that it is a library of skills mapped to an
+                        actual working day, and the habits that keep both from going stale.
                     </p>
                     <div className="cta">
                         <Link className="go" to="/phase/understanding-claude">
