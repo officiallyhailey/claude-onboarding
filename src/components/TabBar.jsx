@@ -28,7 +28,10 @@ function TabBar() {
                     className={({ isActive }) => (isActive ? "on" : "")}
                 >
                     <span className="puck">{d.icon}</span>
-                    <span>{d.label}</span>
+                    {/* `short` where there is one: seven destinations across a
+                        375px phone, and the icon above already says which
+                        phase this is. The full name stays in the title. */}
+                    <span>{d.short || d.label}</span>
                 </NavLink>
             ))}
         </nav>

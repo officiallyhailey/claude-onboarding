@@ -4,12 +4,19 @@
 // the two can never disagree about what exists or which one you are on. Adding
 // a destination is one entry here.
 //
-// The tab labels are not the page titles. A tab label is 10px and they all sit
-// across a phone at once, so each one is the one word its phase's question
-// actually asks: Phase 1 asks what the pieces are, Phase 2 asks how to tell
-// Claude who you are, and so on. Every item keeps a label, because icon-only
-// navigation saves space by making the reader guess, and this theme's inactive
-// label ink is its weakest value: the icon and the label cover for each other.
+// EVERY LABEL IS THE PAGE'S OWN NAME. They used to be a third naming system:
+// the nav said Pieces, You, Systems, Practice while the landing rows and the
+// page headings both said Understanding Claude, Introducing Yourself and so on.
+// Two of those agreed because they read the same string; the nav was the one
+// inventing words, and a reader had to learn a mapping to use it.
+//
+// `short` is what the tab bar shows instead, where seven destinations share a
+// 375px phone. "Phase" is the same word four times over and the icon above it
+// already carries the topic, so only the numeral survives down there.
+//
+// Every item keeps a label of some kind, because icon-only navigation saves
+// space by making the reader guess, and this theme's inactive label ink is its
+// weakest value: the icon and the label cover for each other.
 
 const icon = (d) => (
     <svg
@@ -29,14 +36,14 @@ export const DESTINATIONS = [
     {
         to: "/",
         end: true,
-        label: "Start",
-        full: "The four phases",
+        label: "Home",
+        full: "Home, the four phases",
         icon: icon(<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />),
     },
     {
         to: "/setup",
         label: "Setup",
-        full: "Download and install the kits",
+        full: "Setup, download and install",
         icon: icon(
             <>
                 <path d="M12 3.8v9.4" />
@@ -47,7 +54,8 @@ export const DESTINATIONS = [
     },
     {
         to: "/phase/understanding-claude",
-        label: "Pieces",
+        label: "Phase 1",
+        short: "1",
         full: "Phase 01, Understanding Claude",
         icon: icon(
             <>
@@ -60,7 +68,8 @@ export const DESTINATIONS = [
     },
     {
         to: "/phase/introducing-yourself",
-        label: "You",
+        label: "Phase 2",
+        short: "2",
         full: "Phase 02, Introducing Yourself",
         icon: icon(
             <>
@@ -71,7 +80,8 @@ export const DESTINATIONS = [
     },
     {
         to: "/phase/implementing-your-systems",
-        label: "Systems",
+        label: "Phase 3",
+        short: "3",
         full: "Phase 03, Implementing Your Systems",
         icon: icon(
             <>
@@ -83,7 +93,8 @@ export const DESTINATIONS = [
     },
     {
         to: "/phase/working-together",
-        label: "Practice",
+        label: "Phase 4",
+        short: "4",
         full: "Phase 04, Working Together",
         icon: icon(
             <>
@@ -96,8 +107,8 @@ export const DESTINATIONS = [
     },
     {
         to: "/appendix",
-        label: "Look up",
-        full: "Appendix",
+        label: "Appendix",
+        full: "Appendix, glossary and file map",
         icon: icon(
             <>
                 <circle cx="11" cy="11" r="7" />
