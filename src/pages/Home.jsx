@@ -45,9 +45,9 @@ function Home() {
                         Four phases, from writing code to running <em>a system</em>.
                     </h1>
                     <p className="sell">
-                        Set it up once, and every session starts already knowing your stack, your
-                        rules and how you work. After that it is a library of skills mapped to an
-                        actual working day, and the habits that keep both from going stale.
+                        Everything is here, in order, and each phase builds on the one before. Start
+                        at the beginning, take it at your own pace, and you will end up with a setup
+                        that fits the way you already work.
                     </p>
                     <div className="cta">
                         <Link className="go" to="/phase/understanding-claude">
