@@ -102,8 +102,10 @@ field has nowhere near that room.
 
 Signature elements in use: tone-step cards with a 2px lift, the mono number
 chip, the sticky bottom tab bar below 900px, and the circular icon button. The
-theme's progress ring is deliberately not among them: a count of how many pages
-you have opened is a scoreboard rather than information, and it was the first
-thing on the page. `--lab` is the floor for readable text;
+theme's progress ring is deliberately not among them. The site used to record
+which phases a browser had opened and report it back, as a ring and a fraction
+and a marker on each card; none of that told a reader anything they did not
+already know, so it is gone and nothing replaced it. The only thing this site
+stores is which colour scheme you picked. `--lab` is the floor for readable text;
 `--eyebrow` is only ever used for a label the heading immediately repeats, and
 `--off` only for a tab label that also carries an icon and a fixed position.

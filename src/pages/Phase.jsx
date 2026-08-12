@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { findPhase, neighbours } from "../data/phases";
-import { markOpened } from "../lib/opened";
 import Blocks from "../components/Blocks";
 import SectionNav from "../components/SectionNav";
 import NotFound from "./NotFound";
@@ -11,12 +9,6 @@ import NotFound from "./NotFound";
 function Phase() {
     const { slug } = useParams();
     const phase = findPhase(slug);
-
-    // What the ring on the landing page counts. Recorded on arrival rather than
-    // on leaving, because leaving is not an event a page reliably gets.
-    useEffect(() => {
-        if (phase) markOpened(phase.slug);
-    }, [phase]);
 
     if (!phase) return <NotFound />;
 

@@ -1,22 +1,10 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { phases } from "../data/phases";
 import { packageTree } from "../data/trees";
-import { openedPhases } from "../lib/opened";
 import FileTree from "../components/FileTree";
 import Blocks from "../components/Blocks";
 
 function Home() {
-    const [opened, setOpened] = useState(() => openedPhases());
-
-    // Re-read on focus, so coming back from a phase marks its card without
-    // a reload.
-    useEffect(() => {
-        const sync = () => setOpened(openedPhases());
-        window.addEventListener("focus", sync);
-        return () => window.removeEventListener("focus", sync);
-    }, []);
-
     return (
         <>
             <div className="hero">
@@ -43,7 +31,6 @@ function Home() {
                             <p>{p.blurb}</p>
                             <div className="tags">
                                 <span className="chip">{p.kind}</span>
-                                {opened.includes(p.slug) && <span className="chip">opened</span>}
                             </div>
                             <div className="go">
                                 Read it
