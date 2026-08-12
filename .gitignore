@@ -2,14 +2,4 @@
 node_modules/
 website/dist/
 
-# The context kit is this package's Phase 2 deliverable, and it has to be
-# committed. It is re-included here because a global ignore on this machine
-# excludes any directory called claude-context, to stop a real one (which holds
-# identity, memory and client notes) from ever reaching a repo. That rule is
-# right, and this directory is the exception it cannot know about: these are
-# blank templates carrying interview prompts, not anybody's filled-in context.
-#
-# The negation names the directory rather than the files inside it. Git cannot
-# re-include a file whose parent directory is excluded, so un-ignoring
-# claude-context/**/*.md alone would silently do nothing.
 !phase-2-introducing-yourself/claude-context/
