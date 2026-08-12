@@ -4,6 +4,7 @@ import FileTree from "../components/FileTree";
 import Command from "../components/Command";
 import { packageTree } from "../data/trees";
 import { KitCards, kitById, kitSteps, kitCurl } from "../components/Download";
+import SectionNav from "../components/SectionNav";
 
 // The install page.
 //
@@ -44,9 +45,19 @@ ls ~/.claude/hooks      | wc -l   # 2
 ls ~/.claude/commands             # kickoff.md  ready.md  wrap.md
 ls ~/claude-context               # eight folders and a README`;
 
-function Step({ n, title, children }) {
+const SECTIONS = [
+    { id: "phases", num: "01", title: "How the phases fit together" },
+    { id: "files", num: "02", title: "Get the files" },
+    { id: "install", num: "03", title: "Run the installer" },
+    { id: "places", num: "04", title: "What each installer places" },
+    { id: "manual", num: "05", title: "The two steps that stay manual" },
+    { id: "check", num: "06", title: "Check it worked" },
+    { id: "next", num: "07", title: "Then what" },
+];
+
+function Step({ id, n, title, children }) {
     return (
-        <div className="step">
+        <div className="step" id={id}>
             <h2>
                 <span className="stepn">{n}</span>
                 {title}
@@ -59,6 +70,8 @@ function Step({ n, title, children }) {
 function Setup() {
     return (
         <>
+            <SectionNav sections={SECTIONS} />
+
             <div className="hero narrow">
                 <div className="kicker">Setup</div>
                 <h1>Two commands, then the parts only you can fill in.</h1>
@@ -74,7 +87,7 @@ function Setup() {
                     step, but it is the orientation a reader needs immediately
                     before installing anything, and the landing page was asking
                     for it before anyone had agreed to read the package. */}
-                <Step n="01" title="How the phases fit together">
+                <Step id="phases" n="01" title="How the phases fit together">
                     <Blocks
                         blocks={[
                             {
@@ -121,7 +134,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="02" title="Get the files">
+                <Step id="files" n="02" title="Get the files">
                     <Blocks
                         blocks={[
                             {
@@ -143,7 +156,7 @@ function Setup() {
                     <FileTree tree={packageTree} />
                 </Step>
 
-                <Step n="03" title="Run the installer">
+                <Step id="install" n="03" title="Run the installer">
                     <Blocks
                         blocks={[
                             {
@@ -173,7 +186,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="04" title="What each installer places">
+                <Step id="places" n="04" title="What each installer places">
                     <Blocks
                         blocks={[
                             {
@@ -234,7 +247,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="05" title="The two steps that stay manual">
+                <Step id="manual" n="05" title="The two steps that stay manual">
                     <Blocks
                         blocks={[
                             {
@@ -274,7 +287,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="06" title="Check it worked">
+                <Step id="check" n="06" title="Check it worked">
                     <Blocks
                         blocks={[
                             {
@@ -294,7 +307,7 @@ function Setup() {
                     />
                 </Step>
 
-                <Step n="07" title="Then what">
+                <Step id="next" n="07" title="Then what">
                     <Blocks
                         blocks={[
                             {

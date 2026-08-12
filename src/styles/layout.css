@@ -458,8 +458,11 @@
     display: none;
 }
 
+/* Scoped to .doc, because the rail is a column of the document grid and needs
+   that grid to sit in. The setup page has the same section control but not the
+   two-column layout, so there it is the popup alone. */
 @media (min-width: 1180px) {
-    .rail {
+    .doc > .rail {
         display: block;
         position: sticky;
         top: 70px;
@@ -540,8 +543,12 @@
    pattern: a list button in the bottom-right corner, and a panel that grows out
    of that corner rather than appearing somewhere unrelated to the thing that
    opened it. */
+/* The accent, filled. It is the one persistent control on a reading page and
+   the only thing on the site that has to be findable without being looked for,
+   which is the one job the theme's reserved colour is for. Everything else here
+   still earns attention by brightness or elevation. */
 .tocbtn {
-    display: none;
+    display: inline-flex;
     position: fixed;
     right: 16px;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
@@ -552,13 +559,17 @@
     border-radius: 50%;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--card) 88%, transparent);
-    backdrop-filter: blur(14px);
-    border: 1px solid var(--rule);
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.3);
-    color: var(--ink);
+    background: var(--accent);
+    border: none;
+    box-shadow: 0 8px 26px -6px var(--accent), 0 4px 14px rgba(0, 0, 0, 0.28);
+    color: #fff;
     cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.22s ease;
+}
+
+.tocbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px -8px var(--accent), 0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
 .tocbtn svg {
@@ -567,19 +578,17 @@
 }
 
 .tocbtn[aria-expanded="true"] {
-    color: var(--accent-ink);
-    border-color: var(--accent);
+    transform: none;
 }
 
 .tocpop {
     display: none;
 }
 
-@media (max-width: 1179px) {
-    .tocbtn {
-        display: inline-flex;
-    }
-
+/* One rule now, at every width. The popup was the rail's stand-in below
+   1180px; it is a control of its own since it gained the previous and next
+   page, so it no longer disappears when the rail turns up. */
+@media (min-width: 0px) {
     .tocpop {
         display: block;
         position: fixed;
@@ -614,6 +623,57 @@
         font-size: 14.5px;
         padding: 9px 0;
     }
+}
+
+/* ---------------- previous and next page, inside the popup ---------------- */
+
+/* Stacked rather than side by side. Page names here are full sentences of a
+   kind ("Phase 03, Implementing Your Systems"), and two of those in a 300px row
+   would be four wrapped lines pretending to be two columns. */
+/* Pinned to the bottom of the popup rather than sitting at the end of it. With
+   twelve sections the list is taller than the panel and scrolls inside it, and
+   the page links were the part that fell off the bottom. The negative offsets
+   cancel the panel's own padding so nothing shows through underneath. */
+.tocpage {
+    position: sticky;
+    bottom: -14px;
+    display: grid;
+    gap: 2px;
+    margin-top: 12px;
+    margin-bottom: -14px;
+    padding-top: 12px;
+    padding-bottom: 14px;
+    background: var(--card);
+    border-top: 1px solid var(--rule);
+}
+
+.tocpage .tp {
+    display: block;
+    padding: 8px 0;
+    color: var(--lab);
+    transition: color 0.2s ease;
+}
+
+.tocpage .tp:hover {
+    color: var(--ink);
+}
+
+.tocpage .tplab {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 3px;
+}
+
+.tocpage .tpname {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: inherit;
 }
 
 /* Below 900px the tab bar owns the bottom edge, so the section control lifts

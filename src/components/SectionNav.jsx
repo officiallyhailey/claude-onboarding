@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { DESTINATIONS } from "../data/nav";
 import { readingLine } from "../lib/scroll";
 
 // The section nav, in its two forms.
@@ -28,6 +30,16 @@ function SectionNav({ sections }) {
     const listRef = useRef(null);
     const btnRef = useRef(null);
     const popRef = useRef(null);
+
+    // The page before and after this one, taken from the same list the top bar
+    // and the tab bar are built from, so the three can never disagree about
+    // what order the site is in. Sections move you within a page; these two
+    // move you between pages, and both belong in the one control a reader
+    // reaches for when they want to be somewhere else.
+    const { pathname } = useLocation();
+    const at = DESTINATIONS.findIndex((d) => d.to === pathname);
+    const prev = at > 0 ? DESTINATIONS[at - 1] : null;
+    const next = at >= 0 && at < DESTINATIONS.length - 1 ? DESTINATIONS[at + 1] : null;
 
     const pick = useCallback(() => {
         const line = readingLine();
@@ -144,9 +156,10 @@ function SectionNav({ sections }) {
                 <ol ref={listRef}>{rows}</ol>
             </nav>
 
-            {/* the popup, below it. Rendered at every width and hidden by CSS
-                rather than by a width test in here: a JS breakpoint and a CSS
-                one drift the moment either is edited. */}
+            {/* The popup, at every width. It used to be the rail's small-screen
+                stand-in; it now also carries the previous and next page, which
+                the rail does not, so it earns its place beside the rail rather
+                than only in place of it. */}
             <button
                 type="button"
                 className="tocbtn"
@@ -170,6 +183,27 @@ function SectionNav({ sections }) {
             >
                 <div className="raillab">On this page</div>
                 <ol>{rows}</ol>
+
+                {(prev || next) && (
+                    <div className="tocpage">
+                        {prev && (
+                            <Link className="tp" to={prev.to} onClick={() => setOpen(false)}>
+                                <span className="tplab">
+                                    <span aria-hidden="true">&larr;</span> Previous
+                                </span>
+                                <span className="tpname">{prev.full}</span>
+                            </Link>
+                        )}
+                        {next && (
+                            <Link className="tp" to={next.to} onClick={() => setOpen(false)}>
+                                <span className="tplab">
+                                    Next <span aria-hidden="true">&rarr;</span>
+                                </span>
+                                <span className="tpname">{next.full}</span>
+                            </Link>
+                        )}
+                    </div>
+                )}
             </nav>
         </>
     );
