@@ -367,8 +367,21 @@
     .landing .lede-block {
         padding: 8vh 0 7vh;
     }
+
     .after {
         padding-bottom: 9vh;
+    }
+}
+
+/* Centred only once the text genuinely fills the width, which is phones rather
+   than tablets. With one action left, a left-hugged pill on a phone reads as
+   the last item of the paragraph above it rather than as the thing to press.
+   Tried at the 860px breakpoint first and it was wrong: at 820px the heading
+   and the lede occupy the left half, so a button centred on the container just
+   floats away from the text it belongs to. */
+@media (max-width: 560px) {
+    .cta {
+        justify-content: center;
     }
 }
 
