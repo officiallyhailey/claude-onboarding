@@ -100,8 +100,10 @@ headroom: dark mode spends its whole surface range in the bottom fifth, where
 tiny luminance differences produce large contrast ratios, and a matte light
 field has nowhere near that room.
 
-Signature elements in use: the progress ring on the landing page, tone-step
-cards with a 2px lift, the mono number chip, the sticky bottom tab bar below
-900px, and the circular icon button. `--lab` is the floor for readable text;
+Signature elements in use: tone-step cards with a 2px lift, the mono number
+chip, the sticky bottom tab bar below 900px, and the circular icon button. The
+theme's progress ring is deliberately not among them: a count of how many pages
+you have opened is a scoreboard rather than information, and it was the first
+thing on the page. `--lab` is the floor for readable text;
 `--eyebrow` is only ever used for a label the heading immediately repeats, and
 `--off` only for a tab label that also carries an icon and a fixed position.

@@ -9,15 +9,13 @@ import Blocks from "../components/Blocks";
 function Home() {
     const [opened, setOpened] = useState(() => openedPhases());
 
-    // Re-read on focus, so coming back from a phase updates the count without
+    // Re-read on focus, so coming back from a phase marks its card without
     // a reload.
     useEffect(() => {
         const sync = () => setOpened(openedPhases());
         window.addEventListener("focus", sync);
         return () => window.removeEventListener("focus", sync);
     }, []);
-
-    const done = phases.filter((p) => opened.includes(p.slug)).length;
 
     return (
         <>
@@ -28,28 +26,6 @@ function Home() {
                     A path for a developer to go from writing code to running a full agentic system.
                 </p>
             </div>
-
-            {/* Progress is shown, not stated, and it is the first thing after the
-                title. The ring gives the feeling and the fraction gives the
-                fact, which is why both are here and neither would do alone.
-
-                Only once something has been opened: "0 of 4" on a first visit is
-                a scoreboard nobody asked for. It counts opens rather than
-                completions, because that is the only thing this browser knows. */}
-            {done > 0 && (
-                <div className="progress">
-                    <span className={`ring q${done}`} aria-hidden="true" />
-                    <div>
-                        <div className="big">
-                            {done}
-                            <span>/{phases.length}</span>
-                        </div>
-                        <div className="lab">
-                            {done === phases.length ? "All four phases opened" : "Phases opened"}
-                        </div>
-                    </div>
-                </div>
-            )}
 
             <div className="pick">
                 <h2>The four phases</h2>

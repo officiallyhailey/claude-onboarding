@@ -239,54 +239,6 @@
     border-left: 2px solid var(--accent-dim);
 }
 
-/* ---------------- the progress panel ---------------- */
-
-/* Progress is shown, not stated, and it is the first thing after the title.
-   The ring gives the feeling and the fraction gives the fact. */
-.progress {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    max-width: 1500px;
-    margin: 22px auto 0;
-    padding: 0 20px;
-}
-
-.ring {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 3px solid var(--chip);
-    border-top-color: var(--accent);
-    flex: none;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-
-/* Turning the ring is the only way its one lit side can say more than
-   "started". Set from React, a quarter turn per phase opened. */
-.ring.q1 { transform: rotate(90deg); }
-.ring.q2 { transform: rotate(180deg); }
-.ring.q3 { transform: rotate(270deg); }
-.ring.q4 { border-color: var(--accent); }
-
-.progress .big {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: var(--ink);
-    line-height: 1.05;
-}
-
-.progress .big span {
-    color: var(--lab);
-    font-size: 17px;
-}
-
-.progress .lab {
-    font-size: 12.5px;
-    color: var(--lab);
-}
-
 /* ---------------- cards ---------------- */
 
 /* The landing page keeps cards, and that is not an inconsistency: these are
