@@ -40,14 +40,41 @@ if printf '%s' "$cmd" | grep -Eq '/(Users|home)/[A-Za-z0-9._-]+/'; then
   deny "Command contains an absolute home path, which leaks your account name. Use a relative path."
 fi
 
-# 2. Staging agent or editor working files.
-if printf '%s' "$cmd" | grep -Eq '(^|[[:space:]])\.(claude|cursor|codex|aider|vscode|idea)(/|[[:space:]]|$)'; then
+# 2. Staging agent or editor working files. The optional ./ covers the form
+#    tab completion produces.
+if printf '%s' "$cmd" | grep -Eq '(^|[[:space:]])(\./)?\.(claude|cursor|codex|aider|vscode|idea)(/|[[:space:]]|$)'; then
   deny "Command stages an agent or editor working file (.claude/.cursor/.codex/.vscode/.idea). These do not belong in the repo; use the global gitignore."
 fi
 
 # 3. Obvious secrets by filename.
-if printf '%s' "$cmd" | grep -Eq '(\.env([^.a-zA-Z]|$)|id_rsa|\.pem([[:space:]]|$)|credentials|secrets?\.(json|ya?ml))'; then
-  deny "Command appears to stage a secrets file (.env, key, credentials). Add it to .gitignore instead of committing it."
-fi
+#
+# Each argument is tested on its own rather than the command as one string, so
+# a command that stages a real secret alongside a harmless file is still
+# denied, and so the patterns can be plain globs instead of one long regex.
+#
+# .env is checked WITH its suffixed forms. A bare .env is the one a pattern
+# usually remembers, while .env.local and .env.production are the ones that
+# actually hold keys. The template forms are the deliberate exception: a
+# .env.example carries the key names and no values, and is meant to be
+# committed.
+set -f # a token like *.js must not be glob-expanded against the directory
+for tok in $cmd; do
+  case "$tok" in
+  *.env.example | *.env.sample | *.env.template | *.env.dist) continue ;;
+  esac
+
+  case "$tok" in
+  .env | .env.* | .env-* | */.env | */.env.* | */.env-*)
+    deny "Command stages an environment file, which is where API keys and connection strings live. Add it to .gitignore and commit a .env.example with the names and no values."
+    ;;
+  *id_rsa* | *.pem | *.p12 | *.keystore)
+    deny "Command stages a private key. Keys never belong in a repo; once one is pushed it has to be treated as compromised and rotated."
+    ;;
+  *credentials | *credentials.* | secret.* | secrets.* | */secret.* | */secrets.*)
+    deny "Command appears to stage a credentials file. Add it to .gitignore instead of committing it."
+    ;;
+  esac
+done
+set +f
 
 allow
