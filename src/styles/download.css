@@ -1,0 +1,132 @@
+/* The download panel.
+ *
+ * A download card is a card, with the same tone step and the same 2px lift on
+ * hover as the phase cards, because it is the same kind of object: one thing
+ * you can go and get. What separates the whole package from the two single-kit
+ * downloads is elevation and the accent on its icon, which is the theme's
+ * answer to "make this one the obvious one" now that colour is not.
+ */
+
+.dl {
+    margin: 4px 0 8px;
+}
+
+.dlcards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    gap: 13px;
+    margin-bottom: 18px;
+}
+
+.dlcard {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 17px;
+    color: inherit;
+    text-align: left;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dlcard:hover {
+    background: var(--card-hi);
+    transform: translateY(-2px);
+}
+
+/* One step BELOW the card it sits on, the same as the header's icon button.
+   A control that recedes on a panel reads as part of it; one that lifts reads
+   as a second panel stacked on the first. */
+.dlico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: var(--r-chip);
+    background: var(--icon);
+    color: var(--tag);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dlico svg {
+    width: 18px;
+    height: 18px;
+}
+
+.dlcard.lead {
+    background: var(--card-hi);
+}
+
+.dlcard.lead .dlico {
+    background: var(--accent-dim);
+    color: var(--accent-ink);
+}
+
+.dlcard:hover .dlico {
+    color: var(--ink);
+}
+
+.dlcard.lead:hover .dlico {
+    color: var(--accent-ink);
+}
+
+.dlbody {
+    display: block;
+    flex: 1;
+}
+
+.dlname {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 5px;
+}
+
+.dldesc {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--sub);
+}
+
+/* The filename and the size, in the one place a reader looks before clicking a
+   download. Mono because both are literal values rather than prose. */
+.dlmeta {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    color: var(--eyebrow);
+}
+
+.dlsize {
+    margin-left: auto;
+    flex: none;
+    color: var(--lab);
+}
+
+.dlfile {
+    overflow-wrap: anywhere;
+}
+
+.dlfoot {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--lab);
+    max-width: 72ch;
+    margin: 14px 0 0;
+}
+
+/* Inside the reading measure a single kit is on its own, so the grid has one
+   column and the cards do not need to compete for width. */
+.dl.one .dlcards {
+    grid-template-columns: 1fr;
+}

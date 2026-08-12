@@ -102,12 +102,7 @@ export const phase3 = {
             title: "Install",
             heading: "How do I set it up safely?",
             blocks: [
-                {
-                    t: "shell",
-                    x: `cd phase-3-implementing-your-systems
-./setup-dev.sh --dry-run   # print what it would do
-./setup-dev.sh             # do it`,
-                },
+                { t: "download", only: "p3" },
                 {
                     t: "p",
                     x: "Additive and [[no-clobber]], exactly like Phase 2's installer. It places skills in `~/.claude/skills`, subagents in `~/.claude/agents`, workflows in `~/.claude/workflows`, hook scripts in `~/.claude/hooks`, and stack.md in `~/claude-context/config`.",

@@ -175,12 +175,7 @@ export const phase2 = {
                     t: "thesis",
                     x: "The installer only ever adds. It appends to your CLAUDE.md after backing it up, refuses to overwrite files you have already filled in, and is safe to run more than once.",
                 },
-                {
-                    t: "shell",
-                    x: `cd phase-2-introducing-yourself
-./setup.sh --dry-run   # print exactly what it would do, change nothing
-./setup.sh             # do it`,
-                },
+                { t: "download", only: "p2" },
                 { t: "sub", x: "What it does, in order" },
                 {
                     t: "ol",

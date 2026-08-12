@@ -1,10 +1,15 @@
 # Build output and dependencies. Everything else this repo needs is source.
 node_modules/
-website/dist/
+dist/
+
+# The download zips, packed from phases/ by scripts/build-kits.sh before every
+# dev server and every build. Committing them would be a second copy of the
+# phases that goes stale the first time one of them changes.
+public/downloads/
 
 # Phase 2's context kit is a deliverable, not local state: ./setup.sh copies it
 # into place. It is re-included explicitly because a global gitignore commonly
 # excludes any directory named claude-context, so that a populated one is never
 # committed. The negation names the directory, because git cannot re-include a
 # file whose parent directory is excluded.
-!phase-2-introducing-yourself/claude-context/
+!phases/phase-2-introducing-yourself/claude-context/

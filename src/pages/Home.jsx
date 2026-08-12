@@ -5,6 +5,7 @@ import { packageTree } from "../data/trees";
 import { openedPhases } from "../lib/opened";
 import FileTree from "../components/FileTree";
 import Blocks from "../components/Blocks";
+import Download from "../components/Download";
 
 function Home() {
     const [opened, setOpened] = useState(() => openedPhases());
@@ -136,28 +137,19 @@ function Home() {
                                 "They interlock. The Phase 3 skills read from the Phase 2 context and write back to it. That is why Phase 2 comes first.",
                             ],
                         },
-                        {
-                            t: "sub",
-                            x: "Install order",
-                        },
-                        {
-                            t: "shell",
-                            x: `# Phase 2: introduce yourself (context)
-cd phase-2-introducing-yourself
-./setup.sh --dry-run      # preview
-./setup.sh                # install
+                    ]}
+                />
 
-# Phase 3: implement your systems (procedures)
-cd ../phase-3-implementing-your-systems
-./setup-dev.sh --dry-run  # preview
-./setup-dev.sh            # install`,
-                        },
+                <h2>Download and install</h2>
+                <Blocks
+                    blocks={[
                         {
                             t: "p",
-                            x: "Or run both from the package root with `./install-all.sh`. Both installers are additive and [[no-clobber]]: they never overwrite files you have filled in, they back up CLAUDE.md before touching it, and they are safe to re-run.",
+                            x: "Phases 1 and 4 are reading, and this site is all of it. Phases 2 and 3 install, and the kits below are what they install. Take the whole package unless you have a reason not to: the [[procedures layer]] Phase 3 installs reads from the [[context layer]] Phase 2 creates, so the two are only useful together.",
                         },
                     ]}
                 />
+                <Download />
 
                 <h2>What is in the box</h2>
                 <FileTree tree={packageTree} />

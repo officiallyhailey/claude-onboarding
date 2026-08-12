@@ -4,6 +4,7 @@ import FileCard from "./FileCard";
 import Prompt from "./Prompt";
 import Vocab from "./Vocab";
 import Note from "./Note";
+import Download from "./Download";
 
 // Page content is data, and this is the only place that knows how to draw it.
 //
@@ -171,6 +172,12 @@ function Block({ b }) {
 
         case "prompt":
             return <Prompt label={b.lab} text={b.x} done={b.done} />;
+
+        case "download":
+            // `only` names one kit; without it all three show. The zips are
+            // packed from phases/ at build time, so this is always the tree the
+            // page around it describes.
+            return <Download only={b.only} />;
 
         case "vocab":
             return <Vocab items={b.items} mono={b.mono} />;

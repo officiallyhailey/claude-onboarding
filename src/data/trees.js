@@ -678,8 +678,10 @@ export const devKit = {
 // The package itself
 // ---------------------------------------------------------------------------
 
+// What a reader has after unzipping the download. The site's own source is not
+// in it: the zip is packed from phases/ alone, so this tree is the whole file.
 export const packageTree = {
-    title: "claude-junior-dev-onboarding/",
+    title: "claude-onboarding/",
     wide: true,
     nodes: [
         {

@@ -31,6 +31,13 @@ The build uses hash routing and a relative base, so `dist/` can be opened from a
 folder, served from any static host, or handed to someone as a zip. Deep links
 survive all three.
 
+Both commands run `scripts/build-kits.sh` first, which packs `phases/` into the
+zips the download panel offers and writes a manifest of their sizes beside them.
+They land in `public/downloads/`, are never committed, and are rebuilt from the
+current `phases/` every time, so the download and the page describing it cannot
+drift apart. `Download.jsx` is the panel; the `download` block type puts it on a
+phase page.
+
 ## Where the content lives
 
 ```

@@ -1,10 +1,13 @@
 {
-  "name": "claude-junior-dev-onboarding-site",
+  "name": "claude-onboarding",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "kits": "bash scripts/build-kits.sh",
+    "predev": "npm run kits",
     "dev": "vite",
+    "prebuild": "npm run kits",
     "build": "vite build",
     "preview": "vite preview"
   },
