@@ -4,6 +4,12 @@
 // the two can never disagree about what exists or which one you are on. Adding
 // a destination is one entry here.
 //
+// THE ORDER IS THE READING ORDER, and it is load-bearing: the section popup
+// derives its previous and next page from this array's positions. Setup sits
+// after Phase 4 rather than second, so the bar does not offer a download before
+// a reader knows what either kit is for. Phases 2 and 3 carry the kit they
+// install on the page itself, so nothing is stranded by putting it late.
+//
 // EVERY LABEL IS THE PAGE'S OWN NAME. They used to be a third naming system:
 // the nav said Pieces, You, Systems, Practice while the landing rows and the
 // page headings both said Understanding Claude, Introducing Yourself and so on.
@@ -39,18 +45,6 @@ export const DESTINATIONS = [
         label: "Home",
         full: "Home, the four phases",
         icon: icon(<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />),
-    },
-    {
-        to: "/setup",
-        label: "Setup",
-        full: "Setup, download and install",
-        icon: icon(
-            <>
-                <path d="M12 3.8v9.4" />
-                <path d="M8.2 9.6 12 13.4l3.8-3.8" />
-                <path d="M4.6 16.6v2.6a1 1 0 0 0 1 1h12.8a1 1 0 0 0 1-1v-2.6" />
-            </>
-        ),
     },
     {
         to: "/phase/understanding-claude",
@@ -102,6 +96,18 @@ export const DESTINATIONS = [
                 <path d="M20 4v4h-4" />
                 <path d="M20 12a8 8 0 0 1-13.7 5.6L4 16" />
                 <path d="M4 20v-4h4" />
+            </>
+        ),
+    },
+    {
+        to: "/setup",
+        label: "Setup",
+        full: "Setup, download and install",
+        icon: icon(
+            <>
+                <path d="M12 3.8v9.4" />
+                <path d="M8.2 9.6 12 13.4l3.8-3.8" />
+                <path d="M4.6 16.6v2.6a1 1 0 0 0 1 1h12.8a1 1 0 0 0 1-1v-2.6" />
             </>
         ),
     },

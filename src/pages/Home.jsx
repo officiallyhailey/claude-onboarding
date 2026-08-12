@@ -54,6 +54,11 @@ function Home() {
                         with a setup that fits the way you already work and learn how to make
                         changes as your journey with AI evolves.
                     </p>
+                    {/* One action, and it is "read the list". There used to be a
+                        second offering the download, which invited a reader to
+                        install two kits before knowing what either was for. The
+                        kits are on the phase pages that install them, and on the
+                        setup page, both of which are reached by going in order. */}
                     <div className="cta">
                         {/* Scrolls rather than routes. The phase list is the next
                             thing on this page, so sending someone into Phase 1
@@ -66,9 +71,6 @@ function Home() {
                             View the phases
                             <span aria-hidden="true">&darr;</span>
                         </button>
-                        <Link className="ghost" to="/setup">
-                            Or download the kits
-                        </Link>
                     </div>
                 </div>
 
