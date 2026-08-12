@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { phases } from "../data/phases";
+import { centreOn } from "../lib/scroll";
 
 // The landing page.
 //
@@ -14,6 +16,8 @@ import { phases } from "../data/phases";
 // six thousand words of documentation is just a legibility problem.
 
 function Home() {
+    const rows = useRef(null);
+
     return (
         <>
             <div className="sky" aria-hidden="true">
@@ -45,22 +49,30 @@ function Home() {
                         Four phases, from writing code to running <em>a system</em>.
                     </h1>
                     <p className="sell">
-                        Everything is here, in order, and each phase builds on the one before. Start
-                        at the beginning, take it at your own pace, and you will end up with a setup
-                        that fits the way you already work.
+                        Best practice is to follow each phase, in order, each one building onto the
+                        next. Start at the beginning, take it at your own pace, and you will end up
+                        with a setup that fits the way you already work and learn how to make
+                        changes as your journey with AI evolves.
                     </p>
                     <div className="cta">
-                        <Link className="go" to="/phase/understanding-claude">
-                            Start with Phase 1
-                            <span aria-hidden="true">&rarr;</span>
-                        </Link>
+                        {/* Scrolls rather than routes. The phase list is the next
+                            thing on this page, so sending someone into Phase 1
+                            from here skips the choice they came to make. */}
+                        <button
+                            type="button"
+                            className="go"
+                            onClick={() => centreOn(rows.current)}
+                        >
+                            View the phases
+                            <span aria-hidden="true">&darr;</span>
+                        </button>
                         <Link className="ghost" to="/setup">
                             Or download the kits
                         </Link>
                     </div>
                 </div>
 
-                <div className="rows">
+                <div className="rows" ref={rows}>
                     {phases.map((p) => (
                         <Link className="prow" to={`/phase/${p.slug}`} key={p.slug}>
                             <span className="pn">{`0${p.n}`}</span>

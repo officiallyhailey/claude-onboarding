@@ -173,16 +173,22 @@
     flex-wrap: wrap;
 }
 
+/* A button, not a link, because it moves the page rather than leaving it. That
+   means resetting the three things a <button> does not inherit: the border, the
+   font, and the cursor. */
 .cta .go {
     display: inline-flex;
     align-items: center;
     gap: 11px;
     padding: 15px 30px;
+    border: none;
     border-radius: 999px;
     background: var(--accent);
     color: #fff;
+    font-family: inherit;
     font-size: 15px;
     font-weight: 600;
+    cursor: pointer;
     box-shadow: 0 10px 40px -12px var(--accent);
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s ease;
 }

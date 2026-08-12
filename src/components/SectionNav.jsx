@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { readingLine } from "../lib/scroll";
 
 // The section nav, in its two forms.
 //
@@ -18,11 +19,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // test measures against, so choosing a row always lights that row rather than
 // the one after it.
 
-/** Where the top of a section should sit: clear of the sticky top bar. */
-function readingLine() {
-    const head = document.querySelector(".masthead");
-    return (head ? head.offsetHeight : 0) + 18;
-}
+// readingLine lives in lib/scroll.js because the landing page needs the same
+// measurement to centre its phase list, and two copies of it would drift.
 
 function SectionNav({ sections }) {
     const [here, setHere] = useState(sections[0]?.id);
