@@ -1,0 +1,564 @@
+/* Prose furniture: glossary words, the popover they open, callouts, tables and
+   the expandable rows.
+
+   Almost everything here used to be a filled box. It is not any more. A callout
+   moves into the margin, a table becomes hairlines and air, a comparison
+   becomes two columns of type. What is left is the popover, which genuinely
+   floats and therefore genuinely needs a surface. */
+
+/* ---------------- glossary terms in the prose ---------------- */
+
+/* A defined word looks like part of its sentence until it is approached. The
+   accent does the marking, so the underline can be thin and quiet: a dashed
+   rule under every third word turns a paragraph into a field of dashes. */
+
+.termwrap {
+    position: relative;
+    display: inline-block;
+}
+
+/* `text-align: inherit` is load-bearing. A button is an atomic inline box, so a
+   long term never splits across lines: the text wraps INSIDE the button, and
+   the browser default of text-align:center then centres those lines against the
+   left-aligned prose around them. Invisible on a one-word term, and obvious in
+   a narrow table cell, which is exactly where a term is most likely to wrap. */
+.term {
+    font: inherit;
+    text-align: inherit;
+    color: var(--ink);
+    background: none;
+    border: none;
+    padding: 0 1px;
+    border-radius: 4px;
+    cursor: help;
+    border-bottom: 1px solid var(--accent-dim);
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.term:hover,
+.term.on {
+    background: var(--chip);
+    border-bottom-color: var(--accent);
+}
+
+/* The one-off aside carries its own text rather than a glossary entry, so it is
+   marked differently: dotted, and in the ink ladder rather than the accent. */
+.term.aside {
+    border-bottom-style: dotted;
+    border-bottom-color: var(--lab);
+}
+
+.term.aside:hover,
+.term.aside.on {
+    border-bottom-color: var(--ink);
+}
+
+/* Rendered into document.body, so it is positioned in viewport coordinates and
+   no ancestor can clip it. This is the one element on the site that genuinely
+   floats above the page, so it is the one that keeps a surface. */
+.popover {
+    position: fixed;
+    z-index: 200;
+    width: 300px;
+    background: var(--raised);
+    color: var(--ink);
+    border-radius: 14px;
+    padding: 13px 15px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+    text-align: left;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.5;
+    cursor: default;
+    /* The height cap comes from anchor.js, measured against whichever side had
+       more room. Without the overflow it would be a cap that clips. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    animation: rise-sheet 0.2s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.popover::after {
+    content: "";
+    position: absolute;
+    left: var(--arrow, 150px);
+    margin-left: -6px;
+    border: 6px solid transparent;
+}
+
+.popover.above::after {
+    top: 100%;
+    border-top-color: var(--raised);
+}
+
+.popover.below::after {
+    bottom: 100%;
+    border-bottom-color: var(--raised);
+}
+
+.popover.pinned {
+    background: var(--card-hi);
+}
+
+.popover.pinned.above::after {
+    border-top-color: var(--card-hi);
+}
+
+.popover.pinned.below::after {
+    border-bottom-color: var(--card-hi);
+}
+
+.pop-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--accent-ink);
+    margin-bottom: 6px;
+    overflow-wrap: anywhere;
+}
+
+.pop-body {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.pop-note {
+    display: block;
+    margin-top: 9px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--sub);
+}
+
+/* A collapsed callout's paragraphs. The note can run to three of them, which is
+   why the popover had to learn to cap and scroll. */
+.pop-para {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.pop-para + .pop-para {
+    margin-top: 9px;
+}
+
+/* A definition may name a real token. It sits on the popover's own surface, so
+   it steps DOWN to the chip rather than up: on the raised surface a lighter
+   inline box would read as another control. */
+.popover code,
+.filemap code {
+    font-family: var(--font-mono);
+    font-size: 0.87em;
+    background: var(--chip);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+}
+
+.pop-hint {
+    display: block;
+    margin-top: 9px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--lab);
+}
+
+/* ---------------- callouts, in two forms ---------------- */
+
+/* A callout has a margin form and a collapsed form, and Note.jsx renders both.
+   Which one shows is decided here, because the deciding factor is not really
+   the window width: it is whether the container this note sits in reserves a
+   margin column to float into. Only `.doc > main` does, and only from 1180px.
+
+   THE COLLAPSED FORM IS THE DEFAULT, and that ordering is deliberate. The float
+   used to be the default and was scoped to nothing, so on the landing page,
+   where the content spans the full width and there is no third column at all, a
+   note floated into a column that did not exist and was clipped off the side of
+   the screen. Making the safe form the default means a new container cannot
+   inherit that bug by existing. */
+
+.note {
+    display: none;
+}
+
+.notepin {
+    position: relative;
+    display: flex;
+    margin: 2px 0 16px;
+}
+
+/* One line: an icon and the label, opening the full text in the same popover
+   the glossary words use. It costs a line until it is asked for, which is what
+   the margin was buying in the first place. */
+.pinbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-family: var(--font-sans);
+    cursor: help;
+}
+
+.pinico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--chip);
+    color: var(--accent-ink);
+    transition: background 0.2s ease;
+}
+
+.pinico svg {
+    width: 15px;
+    height: 15px;
+}
+
+.pinlab {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    border-bottom: 1px solid var(--accent-dim);
+    padding-bottom: 1px;
+    transition: border-color 0.2s ease;
+}
+
+.pinbtn:hover .pinico,
+.pinbtn.on .pinico {
+    background: var(--raised);
+}
+
+.pinbtn:hover .pinlab,
+.pinbtn.on .pinlab {
+    border-bottom-color: var(--accent);
+}
+
+/* A standing rule is the loudest a callout gets, so its collapsed form is the
+   one that fills. Everything else stays a quiet mark in the flow. */
+.notepin.rule .pinico {
+    background: var(--accent);
+    color: #fff;
+}
+
+.notepin.rule .pinbtn:hover .pinico,
+.notepin.rule .pinbtn.on .pinico {
+    background: var(--accent-ink);
+}
+
+/* ---- the margin form ---- */
+
+@media (min-width: 1180px) {
+    .doc > main .notepin {
+        display: none;
+    }
+
+    /* `float` rather than grid placement, because a note belongs beside the
+       paragraph it follows and the flow is the only thing that knows where that
+       is. The negative right margin makes the float's margin box narrower than
+       nothing, so it takes no width from the lines beside it and simply sits in
+       the margin. */
+    .doc > main aside.note {
+        display: block;
+        float: right;
+        clear: right;
+        width: 250px;
+        margin: 3px -294px 18px 0;
+        padding-left: 14px;
+        border-left: 2px solid var(--accent-dim);
+        font-size: 13.5px;
+        line-height: 1.55;
+        color: var(--lab);
+    }
+
+    .doc > main aside.note .lab {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        margin-bottom: 5px;
+    }
+
+    .doc > main aside.note .lab svg {
+        width: 14px;
+        height: 14px;
+        flex: none;
+    }
+
+    .doc > main aside.note p {
+        margin: 0 0 7px;
+        font-size: 13.5px;
+    }
+
+    .doc > main aside.note p:last-child {
+        margin-bottom: 0;
+    }
+
+    /* A warning and a standing rule take the full-strength rule; an ordinary
+       aside keeps the dim one. */
+    .doc > main aside.note.warn,
+    .doc > main aside.note.rule {
+        border-left-color: var(--accent);
+    }
+
+    .doc > main aside.note.rule .lab {
+        font-family: var(--font-mono);
+        letter-spacing: 0.04em;
+    }
+
+    .doc > main aside.note.rule p {
+        color: var(--ink);
+    }
+}
+
+/* ---------------- tables ---------------- */
+
+/* No fill, no box, no zebra. One hairline under the head, rows separated by
+   air. A table is a shape the eye reads from alignment; the fills were only
+   ever rescuing rows that were too tight. */
+.tw {
+    overflow-x: auto;
+    margin: 2px 0 20px;
+    max-width: 100%;
+}
+
+table.d {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+table.d th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--eyebrow);
+    padding: 0 16px 9px 0;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+table.d th:last-child,
+table.d td:last-child {
+    padding-right: 0;
+}
+
+/* Words stay whole. `anywhere` broke them mid-character, and a type name split
+   across three lines is not a type name. */
+table.d td {
+    padding: 13px 16px 13px 0;
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--sub);
+    overflow-wrap: normal;
+    word-break: keep-all;
+}
+
+table.d tr + tr td {
+    border-top: 1px solid var(--rule);
+}
+
+/* The first column is the row's name, so it carries the reading ink. That is
+   what replaces the filled cell that used to mark it. */
+table.d td:first-child {
+    color: var(--ink);
+    font-weight: 500;
+}
+
+table.d td.m,
+table.d th.m {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+}
+
+table.d td.n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent-ink);
+    width: 1%;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+/* ---------------- expandable rows ---------------- */
+
+/* Not cards any more. A row is a line of type with a hairline under it and a
+   control on the right, which is the same shape as a table row: the page has
+   one fewer thing to learn. */
+.vocab {
+    margin: 2px 0 20px;
+    border-top: 1px solid var(--rule);
+}
+
+.vrow {
+    border-bottom: 1px solid var(--rule);
+}
+
+.vrow button {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 13px 0;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    line-height: 1.45;
+    transition: color 0.18s ease;
+}
+
+.vrow button:hover {
+    color: var(--accent-ink);
+}
+
+.vocab.mono .vrow button {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.vrow .tw2 {
+    margin-left: auto;
+    color: var(--accent-ink);
+    font-size: 16px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+    flex: none;
+}
+
+.vrow.open .tw2 {
+    transform: rotate(45deg);
+}
+
+.vrow .body p {
+    margin: 0;
+    padding: 0 0 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--sub);
+}
+
+/* ---------------- weak against strong ---------------- */
+
+/* Two columns of type, no boxes. The labels carry it, the accent marks the one
+   worth copying, and the weak one is simply set in the dimmer ink. */
+.versus {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    margin: 6px 0 22px;
+}
+
+@media (min-width: 760px) {
+    .versus {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 30px;
+    }
+}
+
+.vcol .vhead {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.vcol.weak .vhead {
+    color: var(--lab);
+}
+
+.vcol.strong .vhead {
+    color: var(--accent-ink);
+}
+
+.vcol .vhead svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.vcol pre {
+    margin: 0 0 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.vcol.weak pre {
+    color: var(--lab);
+}
+
+.vcol.strong pre {
+    color: var(--ink);
+}
+
+.vcol .why {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--sub);
+}
+
+/* ---------------- the sources list ---------------- */
+
+/* Plain links on a line, not pills. Twenty filled pills is twenty containers,
+   which is the exact problem this layout exists to solve. */
+.sources {
+    margin: 2px 0 16px;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 30px;
+}
+
+@media (max-width: 700px) {
+    .sources {
+        columns: 1;
+    }
+}
+
+.sources li {
+    break-inside: avoid;
+    margin-bottom: 7px;
+}
+
+.sources li a {
+    font-size: 13.5px;
+    color: var(--sub);
+    border-bottom: 1px solid var(--accent-dim);
+    transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.sources li a:hover {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+}

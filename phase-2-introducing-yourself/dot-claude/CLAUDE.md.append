@@ -1,0 +1,9 @@
+
+# >>> claude-ops context imports >>>
+# Added by the Claude Ops kit. Loads your private context into every session.
+# Keep your standing rules ABOVE this block. Keep imported files short, since
+# everything imported here loads in every session regardless of directory.
+@~/claude-context/identity/who-i-am.md
+@~/claude-context/memory/core.md
+@~/claude-context/workflows/_index.md
+# <<< claude-ops context imports <<<

@@ -1,0 +1,30 @@
+{
+  "_comment": "Merge this into ~/.claude/settings.json to register the two hooks. Do NOT replace your whole settings file; add these keys into your existing 'hooks' object. Restart Claude Code (or run /doctor) after editing. Hook schema is version gated; check your version's hooks docs if they do not fire.",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-commit-guard.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/post-edit-format.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

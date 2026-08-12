@@ -1,0 +1,286 @@
+/* The file tree.
+ *
+ * The panel itself is defined in code.css, because a listing and a code sample
+ * are the same object: a machine surface. This file is only the rows.
+ *
+ * Depth here never exceeds three levels, so indentation and the glyph carry it
+ * and there are no guide lines. The hovered row filling with a surface makes
+ * its position unambiguous at the moment anyone is actually asking, which is
+ * the only moment it matters. */
+
+.treetop {
+    padding: 13px 16px 4px;
+}
+
+.treetop .tname {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.thint .on-narrow {
+    display: none;
+}
+
+@media (hover: none), (max-width: 760px) {
+    .thint .on-wide {
+        display: none;
+    }
+
+    .thint .on-narrow {
+        display: inline;
+    }
+}
+
+.treebody {
+    padding: 4px 0 12px;
+    overflow-x: auto;
+}
+
+/* ---------------- a row ---------------- */
+
+/* The row is a container, not a control: a directory row holds two separate
+   targets, and a button inside a button is not valid markup. */
+.trow {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-width: min-content;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.95;
+    color: var(--sub);
+    transition: background 0.18s ease;
+}
+
+.trow:hover,
+.trow.on {
+    background: var(--card-hi);
+}
+
+.tmain {
+    display: flex;
+    align-items: baseline;
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0 0 0 2px;
+    font: inherit;
+    color: inherit;
+    cursor: help;
+}
+
+/* One step of indent per level. */
+.tguide {
+    flex: none;
+    width: 20px;
+}
+
+/* The twisty on a directory. A separate target from the name: this folds the
+   directory away, the name pins the definition. */
+.ttwist {
+    flex: none;
+    width: 20px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--lab);
+    font-size: 8px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.18s ease, transform 0.2s ease;
+}
+
+.ttwist:hover {
+    color: var(--accent-ink);
+}
+
+.ttwist.shut {
+    transform: rotate(-90deg);
+}
+
+/* Stands in for the twisty on a row with nothing to fold, so names at the same
+   level still line up. */
+.tlead {
+    flex: none;
+    width: 20px;
+}
+
+/* Padding on one side and margin on the other, rather than a fixed width: the
+   glyph is wider than the box a fixed width leaves it, and it was sitting hard
+   against the first letter of the name. */
+.tglyph {
+    flex: none;
+    padding-left: 11px;
+    margin-right: 8px;
+    color: var(--lab);
+    font-size: 9px;
+}
+
+.trow.dir .tglyph {
+    color: var(--accent-ink);
+}
+
+.tname2 {
+    color: var(--sub);
+}
+
+/* A directory is the brightest thing in the row, which is how the listing says
+   "this one is structural" without a second colour. */
+.trow.dir .tname2 {
+    color: var(--ink);
+    font-weight: 500;
+}
+
+.trow:hover .tname2,
+.trow.on .tname2 {
+    color: var(--ink);
+}
+
+/* One clause, never a sentence: the sentence is in the popover. It is what lets
+   a tree be skimmed without hovering thirty rows. */
+.tgloss {
+    margin-left: 14px;
+    color: var(--lab);
+    font-size: 11.5px;
+    font-family: var(--font-sans);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tphase {
+    margin-left: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--eyebrow);
+    text-transform: uppercase;
+}
+
+.tmore {
+    display: block;
+    padding: 3px 16px 3px 34px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--lab);
+}
+
+/* On a phone the gloss column is what gives: the name and the shape of the tree
+   are the part that cannot be recovered by tapping. */
+@media (max-width: 760px) {
+    .tgloss,
+    .tphase {
+        display: none;
+    }
+
+    .trow {
+        font-size: 12px;
+    }
+
+    .treetop .thint {
+        margin-left: 0;
+    }
+}
+
+/* ---------------- the flat file map ---------------- */
+
+/* The appendix listing. Rows and hairlines, the same shape as a table, because
+   that is what it is: a hundred filled cards down a page was the container
+   problem at its worst. */
+.filemap {
+    margin: 2px 0 20px;
+    border-top: 1px solid var(--rule);
+}
+
+.filemap .fmrow {
+    display: grid;
+    grid-template-columns: minmax(200px, 32%) minmax(0, 1fr);
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+}
+
+.filemap .fmpath {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+}
+
+.filemap .fmpath .dirmark {
+    color: var(--accent-ink);
+}
+
+.filemap .fmsrc {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--eyebrow);
+}
+
+.filemap .fmdef {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--sub);
+}
+
+.filemap .fmnote {
+    display: block;
+    margin-top: 5px;
+    font-size: 12.5px;
+    color: var(--lab);
+}
+
+@media (max-width: 700px) {
+    .filemap .fmrow {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 7px;
+    }
+}
+
+/* The filter above the map. A sunk surface rather than an outlined one, so it
+   reads as a field to type into rather than as a box drawn around nothing. */
+.fmfilter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 4px;
+    flex-wrap: wrap;
+}
+
+.fmfilter input {
+    flex: 1 1 240px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--chip);
+    border: none;
+    border-radius: 11px;
+    padding: 11px 14px;
+    transition: background 0.2s ease;
+}
+
+.fmfilter input::placeholder {
+    color: var(--lab);
+}
+
+.fmfilter input:focus {
+    background: var(--raised);
+}
+
+.fmfilter .count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent-ink);
+    white-space: nowrap;
+}

@@ -1,0 +1,18 @@
+/* Every stylesheet, in cascade order.
+ *
+ * fonts first so the faces are declared before anything asks for them, then
+ * base because it defines the tokens the rest use, then broad layout, then the
+ * pieces that sit inside it. motion is last so its reduced-motion opt out can
+ * override everything above it.
+ *
+ * There is no separate dark stylesheet. Both palettes are token ladders in
+ * base.css, and every rule below resolves through them, so neither mode needs
+ * a single override of its own. */
+
+@import "./fonts.css";
+@import "./base.css";
+@import "./layout.css";
+@import "./content.css";
+@import "./tree.css";
+@import "./code.css";
+@import "./motion.css";

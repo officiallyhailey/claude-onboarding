@@ -1,0 +1,149 @@
+/* Tokens, resets and typography.
+ *
+ * The Clean App theme, from the DevBricks library (themes/clean-app.md).
+ *
+ * THE PALETTE IS ACHROMATIC AND THAT IS THE POINT. Every value in the chrome is
+ * a grey. There is no accent token, and its absence is a decision rather than an
+ * omission: hierarchy rests on two ladders at once, six steps of ink and five of
+ * surface, and introducing one saturated colour means re-tuning both around it.
+ * If something needs to stand out here, it gets brighter or it gets raised.
+ *
+ * Dark is the theme's base. Light is a REBUILD, not an inversion, and the
+ * numbers are in the theme guide: mirroring the dark ink scale onto a matte
+ * field fails three of the six inks, because dark mode spends its whole surface
+ * ladder in the bottom fifth of the range where small luminance differences
+ * produce large ratios, and a light field has no such headroom. So the light
+ * ladder below is solved against target ratios, and it changes direction
+ * halfway: panels lift toward off-white while the small dense elements sink.
+ */
+
+:root {
+    /* ---- the elevation ladder, dark ---- */
+    --field: #0a0a0b; /* the page */
+    --card: #151618; /* one step up: cards, panels */
+    --card-hi: #1b1d20; /* hover, pressed */
+    --chip: #212327; /* tags */
+    --raised: #2b2d31; /* number chips, the ring's unlit arc, popovers */
+    --icon: #1a1b1d; /* icon-button ground: a step BELOW the card */
+
+    /* ---- ink, brightest to dimmest ---- */
+    --ink: #e9ecee; /* headings, values, the ACTIVE state */
+    --tag: #a8afb4; /* tag text */
+    --sub: #9aa1a6; /* descriptions, body copy */
+    --lab: #7a8085; /* labels. The floor for readable text */
+    --eyebrow: #6e757a; /* eyebrow only, see below */
+    --off: #5c6165; /* inactive tab only, see below */
+
+    /* The one line in the theme: the tab bar's top edge. Nothing else on this
+       site is outlined, and adding a second line is how the softness goes. */
+    --rule: #1c1d1f;
+
+    /* Claude orange. The theme has no accent by design, so this is deliberately
+       scoped to the mark and nothing else until a layout is chosen: the moment
+       an accent starts marking state, the whole ink and surface hierarchy has
+       to be re-tuned around it. Two values, because one orange cannot be both a
+       fill and a readable word on two different fields. */
+    --accent: #d97757;
+    --accent-ink: #e8917a;
+    --accent-dim: rgba(217, 119, 87, 0.22);
+
+    /* ---- geometry ---- */
+    --r: 20px; /* cards and panels */
+    --r-chip: 12px; /* the number chip: a squircle, not a pill */
+    --r-tag: 7px; /* tags */
+    --bar: 64px; /* the bottom tab bar, excluding the safe area */
+
+    --font-sans: Archivo, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ---- light: rebuilt, not inverted ----
+   The field sits in the MIDDLE of this ladder rather than at the floor. Panels
+   lift toward off-white and the small dense elements sink below the field, so a
+   tag genuinely reads as recessed on a light interface. Nothing reaches #ffffff:
+   on a light UI maximum contrast is not maximum readability. */
+:root.light {
+    --field: #dee0e2;
+    --icon: #e3e5e7;
+    --card: #eceef0;
+    --card-hi: #f3f5f7; /* hover, and the lightest value on screen */
+    --chip: #d5d7d9; /* DOWN from the card */
+    --raised: #c2c4c6;
+    --rule: #caccce;
+
+    /* Active is the DARKEST here, for the same reason it is the brightest in
+       dark mode: it is simply the furthest thing from the field. */
+    --ink: #191b1e;
+    --tag: #474c51;
+    --sub: #4c5156;
+    --lab: #565b60;
+    --eyebrow: #5b6065;
+    --off: #5e6368;
+
+    /* The dark accent fails as text on a matte field, so light gets its own. */
+    --accent: #c25f3d;
+    --accent-ink: #a8451f;
+    --accent-dim: rgba(194, 95, 61, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* No scrollbars, in any view. The theme's whole claim is that the design
+   disappears and only the content is left, and a system scrollbar is the one
+   element on screen that was never designed: it belongs to the operating
+   system, it changes between platforms, and on a light surface it draws a hard
+   vertical line down the exact edge the elevation ladder spent its range
+   softening. Scrolling itself is untouched; this hides the indicator.
+
+   On `*` rather than on `html`, because several panels here scroll inside
+   themselves and a rule on the document alone misses them. */
+* {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+body {
+    margin: 0;
+    background: var(--field);
+    color: var(--sub);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Big type, tight tracking. Large sans at default tracking looks slack, and
+   this theme has no colour to distract from that: the type carries the whole
+   first impression. Only the eyebrow is ever letter-spaced. */
+h1,
+h2,
+h3,
+h4 {
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: -0.028em;
+}
+
+a {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+/* The theme strips every default affordance from links, so anything focusable
+   has to say so itself. */
+:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}

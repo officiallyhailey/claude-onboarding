@@ -1,0 +1,34 @@
+/* Motion: soft, short, and on state change only.
+ *
+ * The movement in this theme is upward. Surfaces float over a page, so a card
+ * lifts 2px on hover and a sheet rises into place. Nothing slides sideways and
+ * nothing animates on its own. */
+
+/* Sheets and overlays rise from 20px with no overshoot. The popover is the only
+   thing here that genuinely floats, so it is the only thing that uses it. */
+@keyframes rise-sheet {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* The reduced branch still delivers the content. Nothing is left at
+       opacity: 0 waiting for an animation that will never run. */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Scrolling is not a transition, so the rule above does not reach it. The
+       rail passes behavior: "auto" for the same reason; this covers everything
+       else that scrolls. */
+    html {
+        scroll-behavior: auto;
+    }
+}

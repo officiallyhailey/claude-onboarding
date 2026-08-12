@@ -1,0 +1,61 @@
+/* Self-hosted typefaces, so the site keeps its design with no network.
+ *
+ * Copied out of the DevBricks library rather than linked to it: this project
+ * has to survive being handed to someone as a folder, and a relative path back
+ * into another repo does not travel. Latin subset, and only the weights the
+ * Clean App theme actually uses.
+ *
+ * Licences for both families are beside the files in public/fonts.
+ *
+ * The fallback stacks at the bottom are the point of this file being worth
+ * having. If a woff2 ever fails to load, the type lands on something chosen
+ * rather than on Times.
+ */
+
+@font-face {
+    font-family: "Archivo";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/Archivo-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Archivo";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/Archivo-500.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Archivo";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/Archivo-600.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Archivo";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/Archivo-700.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/JetBrainsMono-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/JetBrainsMono-500.woff2") format("woff2");
+}
