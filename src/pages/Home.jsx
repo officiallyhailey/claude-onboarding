@@ -1,7 +1,7 @@
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { phases } from "../data/phases";
-import { centreOn } from "../lib/scroll";
+import { centreOn, trackChrome } from "../lib/scroll";
 
 // The landing page.
 //
@@ -17,6 +17,12 @@ import { centreOn } from "../lib/scroll";
 
 function Home() {
     const rows = useRef(null);
+
+    // Only the landing sizes itself against the two bars, so the measurement is
+    // set up here and taken back down on the way out, same as the weather.
+    // Layout rather than plain effect: it runs before the first paint, so the
+    // hero is never drawn at the wrong height first.
+    useLayoutEffect(() => trackChrome(), []);
 
     return (
         <>

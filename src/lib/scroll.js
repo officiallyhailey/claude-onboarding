@@ -20,6 +20,43 @@ function usable(line) {
 }
 
 /**
+ * Publish the height of the two sticky bars as `--chrome` on the root.
+ *
+ * For the full-screen hero on a phone, which has to end exactly where the tab
+ * bar begins or the button under it sits behind that bar. The split is on
+ * purpose: the viewport half stays in CSS, where `svh` holds still while a
+ * phone's address bar retracts, and only the bars are measured here, which is
+ * the half CSS cannot see. Same reason as the two above, one rule up: their
+ * heights are not a number to write down.
+ *
+ * Observes rather than listening, so a bar that changes height on its own, a
+ * wrapped label or a late font, is caught as well as a resize. Returns its own
+ * teardown for an effect to call.
+ */
+export function trackChrome() {
+    const bars = [".masthead", ".tabs"]
+        .map((sel) => document.querySelector(sel))
+        .filter(Boolean);
+
+    const set = () => {
+        const h = bars.reduce(
+            (n, el) => n + (el.getClientRects().length ? el.offsetHeight : 0),
+            0,
+        );
+        document.documentElement.style.setProperty("--chrome", `${h}px`);
+    };
+
+    // Fires once on observe, so the first measurement comes from here too.
+    const watch = new ResizeObserver(set);
+    bars.forEach((el) => watch.observe(el));
+
+    return () => {
+        watch.disconnect();
+        document.documentElement.style.removeProperty("--chrome");
+    };
+}
+
+/**
  * Scroll `el` to the middle of the free space.
  *
  * When the block is taller than the space available, centring it would push its

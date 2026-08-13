@@ -364,8 +364,30 @@
     .prow .pk {
         grid-column: 2;
     }
+    /* On a phone the hero IS the screen.
+     *
+     * It used to stop a little past half way, so the four phase rows were
+     * already in view and the button under the lede offered to go and get
+     * something the reader could plainly see. Filling the screen gives the
+     * button its job back and gives the phases an arrival of their own.
+     *
+     * `svh` rather than `vh` or `dvh`. `vh` is the tall viewport, measured as
+     * though the address bar were gone, so the bottom of the hero would sit
+     * under it on load. `dvh` re-measures as that bar retracts, which resizes
+     * the hero while it is being read. `svh` is the small viewport and holds
+     * still, which is the one thing this needs.
+     *
+     * --chrome is the top bar plus the tab bar, measured in scroll.js, because
+     * CSS cannot see a sticky bar and their heights are not a number to write
+     * down here. Until it is set the hero is simply content-sized, which is
+     * what it was before. */
     .landing .lede-block {
-        padding: 8vh 0 7vh;
+        min-height: calc(100svh - var(--chrome));
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 6vh 0;
     }
 
     .after {
