@@ -174,6 +174,57 @@ export function mono(text) {
     return out;
 }
 
+/**
+ * The same markup, with nothing in it that can be clicked.
+ *
+ * For text that is itself inside a control: a vocab row's label sits in the
+ * row's own toggle button, and a button cannot contain a button. The browser
+ * drops or reparents the inner one, and what a keyboard or a screen reader
+ * lands on stops being predictable.
+ *
+ * A glossary word renders as its own text and an aside as its label, so the
+ * sentence still reads as written; backticks still render, because `code` is
+ * formatting rather than a control. Auto-linking never runs here at all: a row
+ * that opens to a definition does not need a second way to reach one.
+ */
+export function plain(text) {
+    if (typeof text !== "string") return text;
+
+    const out = [];
+    let last = 0;
+    let match;
+
+    PATTERN.lastIndex = 0;
+    while ((match = PATTERN.exec(text)) !== null) {
+        if (match.index > last) out.push(text.slice(last, match.index));
+
+        if (match[1] !== undefined) {
+            // [[word|shown]] keeps the shown half, [[word]] keeps the word.
+            const [word, label] = match[1].split("|");
+            out.push(label === undefined ? word : label);
+        } else if (match[2] !== undefined) {
+            // ((shown|detail)) keeps the shown half. The detail is only ever
+            // reachable by hover, so here it has nowhere to go.
+            const cut = match[2].indexOf("|");
+            out.push(cut === -1 ? match[2] : match[2].slice(0, cut));
+        } else {
+            out.push(
+                <code className="i" key={match.index}>
+                    {match[3]}
+                </code>
+            );
+        }
+
+        last = match.index + match[0].length;
+    }
+
+    if (last < text.length) out.push(text.slice(last));
+
+    if (!out.length) return text;
+    if (out.length === 1 && typeof out[0] === "string") return out[0];
+    return out;
+}
+
 export function rich(text) {
     if (typeof text !== "string") return text;
 
