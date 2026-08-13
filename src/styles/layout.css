@@ -679,14 +679,20 @@
 /* Below 900px the tab bar owns the bottom edge, so the section control lifts
    clear of it. Two levels of navigation, stacked in the order they matter:
    the site's destinations pinned to the edge, this page's sections floating
-   above them. */
+   above them.
+   The offset is the bar's own height plus the same 16px the button keeps from
+   the right edge. It used to clear the bar by a single pixel, which read as one
+   control resting on another rather than as a thing floating over the page, and
+   the button's shadow had nowhere to fall. Equal gaps on both sides is what
+   makes it look placed. The safe-area inset is added here as well as in the
+   bar's padding, so the pair keeps its distance on a phone with a home bar. */
 @media (max-width: 899px) {
     .tocbtn {
-        bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+        bottom: calc(100px + env(safe-area-inset-bottom, 0px));
     }
 
     .tocpop {
-        bottom: calc(148px + env(safe-area-inset-bottom, 0px));
+        bottom: calc(164px + env(safe-area-inset-bottom, 0px));
         max-height: min(52vh, 440px);
     }
 }
